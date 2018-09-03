@@ -10,7 +10,7 @@ from core.exceptions import DataError
 from main import app
 
 
-@app.route("/api/posts", methods=["POST", "GET"])
+@app.route("/v1/posts", methods=["POST", "GET"])
 def all_posts():
     if request.method == "GET":
         response = {
@@ -53,7 +53,7 @@ def all_posts():
             return responses.data_error(required_data)
 
 
-@app.route("/api/posts/<string:url>", methods=["GET", "PATCH", "DELETE"])
+@app.route("/v1/posts/<string:url>", methods=["GET", "PATCH", "DELETE"])
 def one_post(url):
     if request.method == "GET":
         response = {

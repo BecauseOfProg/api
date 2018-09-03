@@ -8,7 +8,7 @@ from core.exceptions import InvalidCreds, DataError
 from main import app
 
 
-@app.route('/api/sessions', methods=["POST"])
+@app.route('/v1/sessions', methods=["POST"])
 def create_session():
     if request.get_json == {}:
         raise NotFound

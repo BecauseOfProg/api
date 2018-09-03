@@ -10,7 +10,7 @@ from core.exceptions import DataError
 from main import app
 
 
-@app.route("/api/users", methods=["POST", "GET"])
+@app.route("/v1/users", methods=["POST", "GET"])
 def all_users():
     if request.method == "GET":
         response = {
@@ -45,7 +45,7 @@ def all_users():
             return responses.data_error(required_data)
 
 
-@app.route("/api/users/<string:username>", methods=["GET", "PATCH", "DELETE"])
+@app.route("/v1/users/<string:username>", methods=["GET", "PATCH", "DELETE"])
 def one_user(username):
     if request.method == "GET":
         response = {
@@ -93,7 +93,7 @@ def one_user(username):
         pass
 
 
-@app.route("/api/users/<string:username>/update-password", methods=["PATCH"])
+@app.route("/v1/users/<string:username>/update-password", methods=["PATCH"])
 def update_password(username):
     required_data = {
         "old_password": {
@@ -107,6 +107,6 @@ def update_password(username):
     }
 
 
-@app.route("/api/users/<string:username>/update-permissions", methods=["PATCH"])
+@app.route("/v1/users/<string:username>/update-permissions", methods=["PATCH"])
 def update_permissions(username):
     pass
