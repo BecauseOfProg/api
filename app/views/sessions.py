@@ -1,4 +1,5 @@
 from flask import request
+from werkzeug.exceptions import NotFound
 
 from app.controllers.sessions import SessionsController
 from app.middlewares.body import CheckBody
@@ -10,10 +11,17 @@ from main import app
 @app.route('/api/sessions', methods=["POST"])
 def create_session():
     if request.get_json == {}:
-        return responses.not_found()
+        raise NotFound
     else:
+        required_data = {
+            "email": {
+                "type": "string"
+            },
+            "password": {
+                "type": "string"
+            }
+        }
         try:
-            required_data = ["email", "password"]
             CheckBody(request, required_data=required_data)
             request_data = request.json
             token = SessionsController.create_session(

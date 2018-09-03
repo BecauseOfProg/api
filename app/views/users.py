@@ -1,4 +1,5 @@
 from flask import request
+from werkzeug.exceptions import NotFound
 
 from app.controllers.users import UsersController
 from app.middlewares.body import CheckBody
@@ -44,7 +45,7 @@ def all_users():
             return responses.data_error(required_data)
 
 
-@app.route("/api/users/<string:username>", methods=["GET", "PATCH", "PUT", "DELETE"])
+@app.route("/api/users/<string:username>", methods=["GET", "PATCH", "DELETE"])
 def one_user(username):
     if request.method == "GET":
         response = {
@@ -52,7 +53,7 @@ def one_user(username):
             "user": UsersController.get_one(username)
         }
         return responses.response(response)
-    elif request.method == "PATCH" or request.method == "PUT":
+    elif request.method == "PATCH":
         required_data = {
             "email": {
                 "type": "string",
@@ -82,7 +83,7 @@ def one_user(username):
             request_data = request.json
             token = request.args.get("token")
             if UsersController.get_one_by_token(token)["username"] != username:
-                return responses.not_found()
+                raise NotFound
             UsersController.update_one(
                 token=token, params=request_data)
             return responses.response({"code": 1})
@@ -90,12 +91,6 @@ def one_user(username):
             return responses.data_error(required_data)
     elif request.method == "DELETE":
         pass
-        # if UsersController.delete_one(username):
-        #     return responses.response({
-        #         "code": 1
-        #     })
-        # else:
-        #     return responses.not_found()
 
 
 @app.route("/api/users/<string:username>/update-password", methods=["PATCH"])

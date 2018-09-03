@@ -68,7 +68,6 @@ class PostsController:
 
     @staticmethod
     def delete_one(url):
-        post = {}
         post = PostsController.get_one(url)
         if post == {}:
             raise NotFound

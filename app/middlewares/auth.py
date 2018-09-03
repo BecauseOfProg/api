@@ -9,7 +9,7 @@ class CheckAuth:
             token = request.args.get("token")
             if token is None:
                 raise Unauthorized
-            if UsersController.get_one_by_token(token) == False:
+            if not UsersController.get_one_by_token(token):
                 raise Unauthorized
         except KeyError:
             raise Unauthorized

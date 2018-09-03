@@ -53,49 +53,46 @@ def all_posts():
             return responses.data_error(required_data)
 
 
-@app.route("/api/posts/<string:url>", methods=["GET", "PATCH", "PUT", "DELETE"])
+@app.route("/api/posts/<string:url>", methods=["GET", "PATCH", "DELETE"])
 def one_post(url):
-    try:
-        if request.method == "GET":
-            response = {
-                "code": 1,
-                "post": PostsController.get_one(url)
+    if request.method == "GET":
+        response = {
+            "code": 1,
+            "post": PostsController.get_one(url)
+        }
+        return responses.response(response)
+    elif request.method == "PATCH":
+        required_data = {
+            "title": {
+                "type": "string",
+                "min_length": 5,
+                "max_length": 64
+            },
+            "category": {
+                "type": "string",
+                "max_length": 20
+            },
+            "banner": {
+                "type": "string"
+            },
+            "content": {
+                "type": "string",
+                "min_length": 50
             }
-            return responses.response(response)
-        elif request.method == "PATCH" or request.method == "PUT":
-            try:
-                post = PostsController.get_one(url)
-                required_data = required_data = {
-                    "title": {
-                        "type": "string",
-                        "min_length": 5,
-                        "max_length": 64
-                    },
-                    "category": {
-                        "type": "string",
-                        "max_length": 20
-                    },
-                    "banner": {
-                        "type": "string"
-                    },
-                    "content": {
-                        "type": "string",
-                        "min_length": 50
-                    }
-                }
-                CheckBody(request, required_data=required_data)
-                CheckPermissions(request, permissions=["POST_WRITE"])
-                request_data = request.json
-                PostsController.update_one(
-                    url=url, title=request_data["title"], category=request_data["category"], content=request_data["content"])
-                return responses.response({"code": 1})
-            except DataError:
-                return responses.data_error(required_data)
-        elif request.method == "DELETE":
+        }
+        try:
+            PostsController.get_one(url)
+            CheckBody(request, required_data=required_data)
             CheckPermissions(request, permissions=["POST_WRITE"])
-            PostsController.delete_one(url)
-            return responses.response({
-                "code": 1
-            })
-    except NotFound:
-        return responses.not_found()
+            request_data = request.json
+            PostsController.update_one(
+                url=url, title=request_data["title"], category=request_data["category"], content=request_data["content"])
+            return responses.response({"code": 1})
+        except DataError:
+            return responses.data_error(required_data)
+    elif request.method == "DELETE":
+        CheckPermissions(request, permissions=["POST_WRITE"])
+        PostsController.delete_one(url)
+        return responses.response({
+            "code": 1
+        })
