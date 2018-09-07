@@ -3,7 +3,7 @@ from core.exceptions import InvalidCreds
 from core.utils import passwords
 
 
-class SessionsController:
+class AuthController:
     @staticmethod
     def create_session(email, password):
         for user in User.objects(email=email):

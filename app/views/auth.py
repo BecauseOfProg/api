@@ -1,14 +1,14 @@
 from flask import request
 from werkzeug.exceptions import NotFound
 
-from app.controllers.sessions import SessionsController
+from app.controllers.auth import AuthController
 from app.middlewares.body import CheckBody
 from core import responses
 from core.exceptions import InvalidCreds, DataError
 from main import app
 
 
-@app.route('/v1/sessions', methods=["POST"])
+@app.route('/v1/auth', methods=["POST"])
 def create_session():
     if request.get_json == {}:
         raise NotFound
@@ -24,7 +24,7 @@ def create_session():
         try:
             CheckBody(request, required_data=required_data)
             request_data = request.json
-            token = SessionsController.create_session(
+            token = AuthController.create_session(
                 request_data["email"], request_data["password"])
             response = {
                 "token": token
