@@ -29,13 +29,6 @@ class UsersController:
         return response
 
     @staticmethod
-    def get_all():
-        users = []
-        for user in User.objects(is_activated=True):
-            users.append(UsersController.fill_informations(user))
-        return users
-
-    @staticmethod
     def get_one(username):
         users = {}
         for user in User.objects(username=username, is_activated=True):

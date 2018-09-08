@@ -10,39 +10,31 @@ from core.exceptions import DataError
 from main import app
 
 
-@app.route("/v1/users", methods=["POST", "GET"])
+@app.route("/v1/users", methods=["POST"])
 def all_users():
-    if request.method == "GET":
-        response = {
-            "code": 1,
-            "users": UsersController.get_all()
+    required_data = {
+        "email": {
+            "type": "string",
+            "min_length": 6
+        },
+        "username": {
+            "type": "string",
+            "min_length": 2,
+            "max_length": 32
+        },
+        "password": {
+            "type": "string",
+            "min_length": 8
         }
-        return responses.response(response)
-
-    elif request.method == "POST":
-        required_data = {
-            "email": {
-                "type": "string",
-                "min_length": 6
-            },
-            "username": {
-                "type": "string",
-                "min_length": 2,
-                "max_length": 32
-            },
-            "password": {
-                "type": "string",
-                "min_length": 8
-            }
-        }
-        try:
-            CheckBody(request, required_data=required_data)
-            request_data = request.json
-            UsersController.create_one(
-                email=request_data["email"], username=request_data["username"], password=request_data["password"])
-            return responses.response({"code": 1})
-        except DataError:
-            return responses.data_error(required_data)
+    }
+    try:
+        CheckBody(request, required_data=required_data)
+        request_data = request.json
+        UsersController.create_one(
+            email=request_data["email"], username=request_data["username"], password=request_data["password"])
+        return responses.response({"code": 1})
+    except DataError:
+        return responses.data_error(required_data)
 
 
 @app.route("/v1/users/<string:username>", methods=["GET", "PATCH", "DELETE"])
