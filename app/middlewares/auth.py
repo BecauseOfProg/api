@@ -6,7 +6,7 @@ from app.controllers.users import UsersController
 class CheckAuth:
     def __init__(self, request):
         try:
-            token = request.args.get("token")
+            token = request.headers.get('Authorization')
             if token is None:
                 raise Unauthorized
             if not UsersController.get_one_by_token(token):
