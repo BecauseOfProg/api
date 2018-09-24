@@ -7,10 +7,8 @@ class User(mongodb.DynamicDocument):
     password = mongodb.StringField(required=True, min_length=8)
     timestamp = mongodb.IntField(required=True)
     username = mongodb.StringField(required=True, min_length=2, max_length=32)
-    displayname = mongodb.StringField(
-        required=True, min_length=2, max_length=32)
-    avatar = mongodb.StringField(
-        default="https://cdn.becauseofprog.fr/pictures/new_member.png")
+    displayname = mongodb.StringField(required=True, min_length=2, max_length=32)
+    avatar = mongodb.StringField(default="https://cdn.becauseofprog.fr/pictures/new_member.png")
     description = mongodb.StringField(required=False)
     biography = mongodb.StringField(required=False)
     location = mongodb.StringField(required=False)

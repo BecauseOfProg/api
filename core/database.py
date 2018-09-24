@@ -13,5 +13,9 @@ class Database:
         self.username = self.config.get("db", "username")
         self.password = self.config.get("db", "password")
         self.auth_source = self.config.get("db", "auth_source")
-        mongodb.connect(db=self.db, host=self.host, port=int(self.port), username=self.username,
-                        password=self.password, authentication_source=self.auth_source)
+        mongodb.connect(db=self.db,
+                        host=self.host,
+                        port=int(self.port),
+                        username=self.username,
+                        password=self.password,
+                        authentication_source=self.auth_source)

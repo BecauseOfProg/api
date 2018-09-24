@@ -49,8 +49,13 @@ class PostsController:
         try:
             timestamp = int(time.time())
             post_id = ids.generate_id()
-            post = Post(title=title, url=url, content=content,
-                        category=category, timestamp=timestamp, post_id=post_id, author=author_username)
+            post = Post(title=title,
+                        url=url,
+                        content=content,
+                        category=category,
+                        timestamp=timestamp,
+                        post_id=post_id,
+                        author=author_username)
             post.save()
             return True
         except ValidationError:

@@ -30,8 +30,9 @@ def all_users():
     try:
         CheckBody(request, required_data=required_data)
         request_data = request.json
-        UsersController.create_one(
-            email=request_data["email"], username=request_data["username"], password=request_data["password"])
+        UsersController.create_one(email=request_data["email"],
+                                   username=request_data["username"],
+                                   password=request_data["password"])
         return responses.response({"code": 1})
     except DataError:
         return responses.data_error(required_data)
@@ -73,11 +74,11 @@ def one_user(username):
             CheckBody(request, required_data)
             CheckAuth(request)
             request_data = request.json
-            token = request.args.get("token")
+            token = request.headers.get("Authorization")
             if UsersController.get_one_by_token(token)["username"] != username:
                 raise NotFound
-            UsersController.update_one(
-                token=token, params=request_data)
+            UsersController.update_one(token=token,
+                                       params=request_data)
             return responses.response({"code": 1})
         except DataError:
             return responses.data_error(required_data)

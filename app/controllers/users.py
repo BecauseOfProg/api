@@ -70,8 +70,12 @@ class UsersController:
     @staticmethod
     def update_one(token, params):
         try:
-            User.objects(token=token).update_one(set__email=params["email"], set__displayname=params["displayname"], set__description=params[
-                "description"], set__biography=params["biography"], set__location=params["location"], set__socials=params["socials"])
+            User.objects(token=token).update_one(set__email=params["email"],
+                                                 set__displayname=params["displayname"],
+                                                 set__description=params["description"],
+                                                 set__biography=params["biography"],
+                                                 set__location=params["location"],
+                                                 set__socials=params["socials"])
         except ValidationError:
             raise DataError
 
