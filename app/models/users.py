@@ -2,11 +2,11 @@ import mongoengine as mongodb
 
 
 class User(mongodb.DynamicDocument):
-    email = mongodb.EmailField(required=True, min_length=6)
-    user_id = mongodb.LongField(required=True)
+    email = mongodb.EmailField(required=True, unique=True, min_length=6)
+    user_id = mongodb.LongField(required=True, unique=True)
     password = mongodb.StringField(required=True, min_length=8)
     timestamp = mongodb.IntField(required=True)
-    username = mongodb.StringField(required=True, min_length=2, max_length=32)
+    username = mongodb.StringField(required=True, unique=True, min_length=2, max_length=32)
     displayname = mongodb.StringField(required=True, min_length=2, max_length=32)
     avatar = mongodb.StringField(default="https://cdn.becauseofprog.fr/pictures/new_member.png")
     description = mongodb.StringField(required=False)

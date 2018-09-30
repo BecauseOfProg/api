@@ -18,3 +18,10 @@ def data_error(required_data):
         "message": "Data error",
         "required_data": required_data
     }), 400, {"Content-Type": "application/json"}
+
+
+def not_unique():
+    return json.dumps({
+        "code": 0,
+        "message": "Already exists"
+    }), 400, {"Content-Type": "application/json"}

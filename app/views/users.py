@@ -1,5 +1,6 @@
 from flask import request
 from werkzeug.exceptions import NotFound
+from mongoengine.errors import NotUniqueError
 
 from app.controllers.users import UsersController
 from app.middlewares.body import CheckBody
@@ -34,6 +35,8 @@ def all_users():
                                    username=request_data["username"],
                                    password=request_data["password"])
         return responses.response({"code": 1})
+    except NotUniqueError:
+        return responses.not_unique()
     except DataError:
         return responses.data_error(required_data)
 
@@ -80,6 +83,8 @@ def one_user(username):
             UsersController.update_one(token=token,
                                        params=request_data)
             return responses.response({"code": 1})
+        except NotUniqueError:
+            return responses.not_unique()
         except DataError:
             return responses.data_error(required_data)
     elif request.method == "DELETE":
