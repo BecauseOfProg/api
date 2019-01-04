@@ -1,20 +1,22 @@
-import mongoengine as mongodb
+from pony.orm import *
+from main import db
 
 
-class User(mongodb.DynamicDocument):
-    email = mongodb.EmailField(required=True, unique=True, min_length=6)
-    user_id = mongodb.LongField(required=True, unique=True)
-    password = mongodb.StringField(required=True, min_length=8)
-    timestamp = mongodb.IntField(required=True)
-    username = mongodb.StringField(required=True, unique=True, min_length=2, max_length=32)
-    displayname = mongodb.StringField(required=True, min_length=2, max_length=32)
-    avatar = mongodb.StringField(default="https://cdn.becauseofprog.fr/pictures/new_member.png")
-    description = mongodb.StringField(required=False)
-    biography = mongodb.StringField(required=False)
-    location = mongodb.StringField(required=False)
-    socials = mongodb.ListField(required=False)
-    permissions = mongodb.ListField(required=False)
-    is_email_public = mongodb.BooleanField(default=False)
-    token = mongodb.StringField(required=True)
-    is_activated = mongodb.BooleanField(default=True)
-    meta = {"collection": "users"}
+class User(db.Entity):
+    username = PrimaryKey(str, max_len=32)
+    email = Required(str, unique=True)
+    password = Required(str)
+    password_type = Required(str, default="argon2")
+    timestamp = Required(int)
+    displayname = Required(str, max_len=32)
+    avatar = Required(str, default="https://cdn.becauseofprog.fr/pictures/new_member.png", column='picture')
+    description = Required(str, default="Bonjour ! :)")
+    biography = Optional(str, column='bio')
+    location = Optional(str, column='localisation')
+    socials = Required(Json, default=[])
+    permissions = Required(Json, default=[])
+    is_email_public = Required(bool, column='mail_profile', default=False)
+    token = Required(str)
+    is_activated = Required(bool, default=True)
+
+    _table_ = "users"

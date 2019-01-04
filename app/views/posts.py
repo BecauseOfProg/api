@@ -1,5 +1,4 @@
 from flask import request
-from mongoengine.errors import NotUniqueError
 
 from app.controllers.posts import PostsController
 from app.controllers.users import UsersController
@@ -17,6 +16,7 @@ def all_posts():
             "code": 1,
             "posts": PostsController.get_all()
         }
+        print(response)
         return responses.response(response)
 
     elif request.method == "POST":
@@ -51,8 +51,8 @@ def all_posts():
                                        content=request_data["content"],
                                        author_username=author["username"])
             return responses.response({"code": 1})
-        except NotUniqueError:
-            return responses.not_unique()
+        # except NotUniqueError:
+        #     return responses.not_unique()
         except DataError:
             return responses.data_error(required_data)
 
@@ -94,8 +94,8 @@ def one_post(url):
                                        category=request_data["category"],
                                        content=request_data["content"])
             return responses.response({"code": 1})
-        except NotUniqueError:
-            return responses.not_unique()
+        # except NotUniqueError:
+        #     return responses.not_unique()
         except DataError:
             return responses.data_error(required_data)
     elif request.method == "DELETE":

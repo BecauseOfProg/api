@@ -1,21 +1,22 @@
-import mongoengine as mongodb
+from pony.orm import *
 
 from .config import Config
 
 
-class Database:
+class ApiDatabase:
 
-    def __init__(self):
-        self.config = Config()
-        self.db = self.config.get("db", "db")
-        self.host = self.config.get("db", "host")
-        self.port = self.config.get("db", "port")
-        self.username = self.config.get("db", "username")
-        self.password = self.config.get("db", "password")
-        self.auth_source = self.config.get("db", "auth_source")
-        mongodb.connect(db=self.db,
-                        host=self.host,
-                        port=int(self.port),
-                        username=self.username,
-                        password=self.password,
-                        authentication_source=self.auth_source)
+    @staticmethod
+    def create():
+        config = Config()
+        db = config.get("db", "db")
+        host = config.get("db", "host")
+        port = config.get("db", "port")
+        username = config.get("db", "username")
+        password = config.get("db", "password")
+        database = Database()
+        database.bind(provider='mysql',
+                           host=host,
+                           user=username,
+                           passwd=password,
+                           db=db)
+        return database
