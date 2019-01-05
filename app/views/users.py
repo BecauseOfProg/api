@@ -88,7 +88,7 @@ def update_profile(username):
         return responses.data_error(required_data)
 
 
-@app.route("/v1/users/<string:username>/update-email", methods=["PATCH"])
+@app.route("/v1/users/<string:username>/email", methods=["PATCH"])
 def update_email(username):
     required_data = {
         "new_email": {
@@ -97,7 +97,7 @@ def update_email(username):
         }
     }
 
-@app.route("/v1/users/<string:username>/update-password", methods=["PATCH"])
+@app.route("/v1/users/<string:username>/password", methods=["PATCH"])
 def update_password(username):
     required_data = {
         "old_password": {
@@ -111,7 +111,7 @@ def update_password(username):
     }
 
 
-@app.route("/v1/users/<string:username>/update-permissions", methods=["PATCH"])
+@app.route("/v1/users/<string:username>/permissions", methods=["PATCH"])
 def update_permissions(username):
     required_data = {
         "permissions": {
