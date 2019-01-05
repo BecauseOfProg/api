@@ -110,6 +110,16 @@ def update_password(username):
         }
     }
 
+@app.route("/v1/users/<string:username>/permissions", methods=["GET"])
+def get_user_permissions(username):
+    CheckPermissions(request, permissions=["USER_WRITE"])
+    response = {
+        "code": 1,
+        "permissions": UsersController.get_user_permissions(username)
+    }
+    return responses.response(response)
+
+
 
 @app.route("/v1/users/<string:username>/permissions", methods=["PATCH"])
 def update_permissions(username):

@@ -11,8 +11,8 @@ from core.utils.passwords import ArgonHasher, BcryptHasher
 
 class UsersController:
     @staticmethod
-    def fill_informations(user: User):
-        fields = ["username", "displayname", "timestamp", "picture", "description", "biography", "location", "socials", "permissions", "is_email_public"]
+    def fill_informations(user: User, additional_fields: list = []):
+        fields = ["username", "displayname", "timestamp", "picture", "description", "biography", "location", "socials", "is_email_public"] + additional_fields
         if user.is_email_public:
             fields.append("email")
         return user.to_dict(only=fields)
@@ -33,11 +33,25 @@ class UsersController:
     def get_one_by_token(token):
         try:
             user = User.get(token=token)
+            if user is None:
+                raise NotFound
             if user.is_activated is False or user.is_verified is False:
                 raise NotFound
-            return UsersController.fill_informations(user)
+            return UsersController.fill_informations(user, additional_fields=["permissions"])
         except core.ObjectNotFound:
             raise NotFound
+
+    @staticmethod
+    @db_session
+    def get_user_permissions(username):
+        try:
+            user = User[username]
+            if user.is_activated is False or user.is_verified is False:
+                raise NotFound
+            return user.permissions
+        except core.ObjectNotFound:
+            raise NotFound
+
 
     @staticmethod
     @db_session
