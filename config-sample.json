@@ -2,7 +2,6 @@
   "db": {
     "db": "api",
     "host": "127.0.0.1",
-    "port": "0000",
     "username": "api",
     "password": ""
   }

@@ -10,7 +10,6 @@ class ApiDatabase:
         config = Config()
         db = config.get("db", "db")
         host = config.get("db", "host")
-        port = config.get("db", "port")
         username = config.get("db", "username")
         password = config.get("db", "password")
         database = Database()
