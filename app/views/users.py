@@ -1,6 +1,5 @@
 from flask import request
 from werkzeug.exceptions import NotFound
-from mongoengine.errors import NotUniqueError
 
 from app.controllers.users import UsersController
 from app.middlewares.body import CheckBody
