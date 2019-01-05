@@ -4,19 +4,20 @@ from main import db
 
 class User(db.Entity):
     username = PrimaryKey(str, max_len=32)
+    displayname = Required(str, max_len=32)
     email = Required(str, unique=True)
     password = Required(str)
     password_type = Required(str, default="argon2")
-    timestamp = Required(int)
-    displayname = Required(str, max_len=32)
-    avatar = Required(str, default="https://cdn.becauseofprog.fr/pictures/new_member.png", column='picture')
-    description = Required(str, default="Bonjour ! :)")
-    biography = Optional(str, column='bio')
-    location = Optional(str, column='localisation')
-    socials = Required(Json, default=[])
     permissions = Required(Json, default=[])
-    is_email_public = Required(bool, column='mail_profile', default=False)
     token = Required(str)
+    timestamp = Required(int)
+    picture = Required(str, default="https://cdn.becauseofprog.fr/pictures/new_member.png")
+    description = Optional(str)
+    biography = Optional(str)
+    location = Optional(str)
+    socials = Required(Json, default=[])
+    is_email_public = Required(bool, default=False)
     is_activated = Required(bool, default=True)
+    is_verified = Required(bool, default=False)
 
     _table_ = "users"

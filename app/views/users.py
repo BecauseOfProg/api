@@ -58,13 +58,13 @@ def update_profile(username):
             "min_length": 2,
             "max_length": 32
         },
+        "picture": {
+            "type": "string"
+        },
         "description": {
             "type": "string"
         },
         "biography": {
-            "type": "string"
-        },
-        "avatar": {
             "type": "string"
         },
         "location": {

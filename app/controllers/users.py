@@ -12,7 +12,7 @@ from core.utils.passwords import ArgonHasher, BcryptHasher
 class UsersController:
     @staticmethod
     def fill_informations(user: User):
-        fields = ["username", "displayname", "timestamp", "avatar", "description", "biography", "location", "socials", "permissions", "is_email_public"]
+        fields = ["username", "displayname", "timestamp", "picture", "description", "biography", "location", "socials", "permissions", "is_email_public"]
         if user.is_email_public:
             fields.append("email")
         return user.to_dict(only=fields)
@@ -21,7 +21,10 @@ class UsersController:
     @db_session
     def get_one(username):
         try:
-            return UsersController.fill_informations(User[username])
+            user = User[username]
+            if user.is_activated is False or user.is_verified is False:
+                raise NotFound
+            return UsersController.fill_informations(user)
         except core.ObjectNotFound:
             raise NotFound
 
@@ -29,7 +32,10 @@ class UsersController:
     @db_session
     def get_one_by_token(token):
         try:
-            return UsersController.fill_informations(User.get(token=token))
+            user = User.get(token=token)
+            if user.is_activated is False or user.is_verified is False:
+                raise NotFound
+            return UsersController.fill_informations(user)
         except core.ObjectNotFound:
             raise NotFound
 
@@ -54,7 +60,7 @@ class UsersController:
     def update_profile(token, params):
         try:
             user = User.get(token=token)
-            user.avatar = params["avatar"]
+            user.picture = params["picture"]
             user.displayname = params["displayname"]
             user.description = params["description"]
             user.biography = params["biography"]
