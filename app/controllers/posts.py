@@ -11,8 +11,8 @@ from core.utils import ids
 
 class PostsController:
     @staticmethod
-    def fill_informations(post: Post):
-        fields = ["title", "url", "category", "author", "timestamp", "content"]
+    def fill_informations(post: Post, additional_fields: list = []):
+        fields = ["title", "url", "category", "author", "timestamp"] + additional_fields
         if post.banner != "":
             fields.append("banner")
         return post.to_dict(only=fields)
@@ -27,9 +27,15 @@ class PostsController:
 
     @staticmethod
     @db_session
+    def get_last():
+        posts = list(Post.select().order_by(desc(Post.timestamp)))
+        return PostsController.fill_informations(posts[0])
+
+    @staticmethod
+    @db_session
     def get_one(url):
         try:
-            return PostsController.fill_informations(Post[url])
+            return PostsController.fill_informations(Post[url], ["content"])
         except core.ObjectNotFound:
             raise NotFound
 

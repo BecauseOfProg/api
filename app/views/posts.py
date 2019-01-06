@@ -9,52 +9,60 @@ from core.exceptions import DataError
 from main import app
 
 
-@app.route("/v1/posts", methods=["POST", "GET"])
-def all_posts():
-    if request.method == "GET":
-        response = {
-            "code": 1,
-            "posts": PostsController.get_all()
-        }
-        print(response)
-        return responses.response(response)
+@app.route("/v1/posts", methods=["GET"])
+def get_all_posts():
+    response = {
+        "code": 1,
+        "posts": PostsController.get_all()
+    }
+    return responses.response(response)
 
-    elif request.method == "POST":
-        required_data = {
-            "title": {
-                "type": "string",
-                "min_length": 5,
-                "max_length": 64
-            },
-            "url": {
-                "type": "string",
-                "min_length": 5,
-                "max_length": 64
-            },
-            "category": {
-                "type": "string",
-                "max_length": 20
-            },
-            "content": {
-                "type": "string",
-                "min_length": 50
-            }
+@app.route("/v1/posts/last", methods=["GET"])
+def get_last_post():
+    response = {
+        "code": 1,
+        "post": PostsController.get_last()
+    }
+    return responses.response(response)
+
+
+@app.route("/v1/posts", methods=["POST"])
+def create_post():
+    required_data = {
+        "title": {
+            "type": "string",
+            "min_length": 5,
+            "max_length": 64
+        },
+        "url": {
+            "type": "string",
+            "min_length": 5,
+            "max_length": 64
+        },
+        "category": {
+            "type": "string",
+            "max_length": 20
+        },
+        "content": {
+            "type": "string",
+            "min_length": 50
         }
-        try:
-            CheckBody(request, required_data=required_data)
-            CheckPermissions(request, permissions=["POST_WRITE"])
-            request_data = request.json
-            author = UsersController.get_one_by_token(request.headers.get("Authorization"))
-            PostsController.create_one(title=request_data["title"],
-                                       url=request_data["url"],
-                                       category=request_data["category"],
-                                       content=request_data["content"],
-                                       author_username=author["username"])
-            return responses.response({"code": 1})
-        # except NotUniqueError:
-        #     return responses.not_unique()
-        except DataError:
-            return responses.data_error(required_data)
+    }
+    try:
+        CheckBody(request, required_data=required_data)
+        CheckPermissions(request, permissions=["POST_WRITE"])
+        request_data = request.json
+        author = UsersController.get_one_by_token(request.headers.get("Authorization"))
+        PostsController.create_one(title=request_data["title"],
+                                   url=request_data["url"],
+                                   category=request_data["category"],
+                                   content=request_data["content"],
+                                   author_username=author["username"])
+        return responses.response({"code": 1})
+    # except NotUniqueError:
+    #     return responses.not_unique()
+    except DataError:
+        return responses.data_error(required_data)
 
 
 @app.route("/v1/posts/<string:url>", methods=["GET", "PATCH", "DELETE"])
