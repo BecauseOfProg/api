@@ -24,9 +24,10 @@ def create_session():
         try:
             CheckBody(request, required_data=required_data)
             request_data = request.json
-            token = AuthController.create_session(email=request_data["email"], password=request_data["password"])
+            data = AuthController.create_session(email=request_data["email"], password=request_data["password"])
             response = {
-                "token": token
+                "code": 1,
+                "data": data
             }
             return responses.response(response)
         except DataError:
