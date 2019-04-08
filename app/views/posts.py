@@ -54,6 +54,9 @@ def create_post():
         'content': {
             'type': 'string',
             'min_length': 50
+        },
+        'banner': {
+            'type': 'string'
         }
     }
     try:

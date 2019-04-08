@@ -12,9 +12,7 @@ from core.utils import ids
 class PostsController:
     @staticmethod
     def fill_informations(post: Post, additional_fields: list = []):
-        fields = ['title', 'url', 'category', 'author', 'timestamp'] + additional_fields
-        if post.banner != '':
-            fields.append('banner')
+        fields = ['title', 'url', 'category', 'author', 'timestamp', 'banner'] + additional_fields
         post = post.to_dict(only=fields)
         post['author'] = UsersController.get_one(post['author'])
         return post
@@ -43,12 +41,13 @@ class PostsController:
 
     @staticmethod
     @db_session
-    def create_one(title, url, category, content, author_username):
+    def create_one(title, url, category, content, banner, author_username):
         timestamp = int(time.time())
         post = Post(title=title,
                     url=url,
                     content=content,
                     category=category,
+                    banner=banner,
                     timestamp=timestamp,
                     author=author_username)
         commit()
