@@ -8,10 +8,10 @@ class ApiDatabase:
     @staticmethod
     def create():
         config = Config()
-        db = config.get("db", "db")
-        host = config.get("db", "host")
-        username = config.get("db", "username")
-        password = config.get("db", "password")
+        db = config.get('db', 'db')
+        host = config.get('db', 'host')
+        username = config.get('db', 'username')
+        password = config.get('db', 'password')
         database = Database()
         database.bind(provider='mysql',
                            host=host,

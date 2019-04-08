@@ -22,13 +22,13 @@ class BcryptHasher:
     def generate_password(password):
         return str(
             bcrypt.hashpw(
-                bytes(password, "utf-8"),
+                bytes(password, 'utf-8'),
                 bcrypt.gensalt())) \
-            .replace("b'", "")[:-1]
+            .replace("b'", '')[:-1]
 
     @staticmethod
     def are_password_same(hashed, password):
         return bcrypt.checkpw(
-            bytes(password, "utf-8"),
-            bytes(hashed, "utf-8"))
+            bytes(password, 'utf-8'),
+            bytes(hashed, 'utf-8'))
 

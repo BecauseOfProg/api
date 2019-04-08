@@ -10,7 +10,7 @@ class AuthController:
     @db_session
     def create_session(email, password):
         for user in User.select(lambda u: u.email == email):
-            if user.password_type == "bcrypt":
+            if user.password_type == 'bcrypt':
                 if BcryptHasher.are_password_same(user.password, password):
                     return {
                         'user': UsersController.get_one_by_token(user.token),

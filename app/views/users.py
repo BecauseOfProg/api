@@ -9,130 +9,122 @@ from core import responses
 from core.exceptions import DataError
 from main import app
 
-
-@app.route("/v1/users", methods=["POST"])
+@app.route('/v1/users', methods=['POST'])
 def get_all_users():
     required_data = {
-        "email": {
-            "type": "string",
-            "min_length": 6
+        'email': {
+            'type': 'string',
+            'min_length': 6
         },
-        "username": {
-            "type": "string",
-            "min_length": 2,
-            "max_length": 32
+        'username': {
+            'type': 'string',
+            'min_length': 2,
+            'max_length': 32
         },
-        "password": {
-            "type": "string",
-            "min_length": 8
+        'password': {
+            'type': 'string',
+            'min_length': 8
         }
     }
     try:
         CheckBody(request, required_data=required_data)
         request_data = request.json
-        UsersController.create_one(email=request_data["email"],
-                                   username=request_data["username"],
-                                   password=request_data["password"])
-        return responses.response({"code": 1})
-    # except NotUniqueError:
-    #     return responses.not_unique()
+        UsersController.create_one(email=request_data['email'],
+                                   username=request_data['username'],
+                                   password=request_data['password'])
+        return responses.response({'code': 1})
     except DataError:
         return responses.data_error(required_data)
 
-
-@app.route("/v1/users/<string:username>", methods=["GET"])
+@app.route('/v1/users/<string:username>', methods=['GET'])
 def get_one_user(username):
     response = {
-        "code": 1,
-        "user": UsersController.get_one(username)
+        'code': 1,
+        'user': UsersController.get_one(username)
     }
     return responses.response(response)
 
+@app.route('/v1/users/<string:username>/permissions', methods=['GET'])
+def get_user_permissions(username):
+    CheckPermissions(request, permissions=['USER_WRITE'])
+    response = {
+        'code': 1,
+        'permissions': UsersController.get_user_permissions(username)
+    }
+    return responses.response(response)
 
-@app.route("/v1/users/<string:username>", methods=["PATCH"])
+@app.route('/v1/users/<string:username>', methods=['PATCH'])
 def update_profile(username):
     required_data = {
-        "displayname": {
-            "type": "string",
-            "min_length": 2,
-            "max_length": 32
+        'displayname': {
+            'type': 'string',
+            'min_length': 2,
+            'max_length': 32
         },
-        "picture": {
-            "type": "string"
+        'picture': {
+            'type': 'string'
         },
-        "description": {
-            "type": "string"
+        'description': {
+            'type': 'string'
         },
-        "biography": {
-            "type": "string"
+        'biography': {
+            'type': 'string'
         },
-        "location": {
-            "type": "string",
+        'location': {
+            'type': 'string',
         },
-        "socials": {
-            "type": "list of dicts"
+        'socials': {
+            'type': 'list<dict>'
         }
     }
     try:
         CheckBody(request, required_data)
         CheckAuth(request)
         request_data = request.json
-        token = request.headers.get("Authorization")
-        if UsersController.get_one_by_token(token)["username"] != username:
+        token = request.headers.get('Authorization')
+        if UsersController.get_one_by_token(token)['username'] != username:
             raise NotFound
         UsersController.update_profile(token=token,
                                    params=request_data)
-        return responses.response({"code": 1})
+        return responses.response({'code': 1})
     except DataError:
         return responses.data_error(required_data)
 
-
-@app.route("/v1/users/<string:username>/email", methods=["PATCH"])
+@app.route('/v1/users/<string:username>/email', methods=['PATCH'])
 def update_email(username):
     required_data = {
-        "new_email": {
-            "type": "string",
-            "min_length": 6
+        'new_email': {
+            'type': 'string',
+            'min_length': 6
         }
     }
 
-@app.route("/v1/users/<string:username>/password", methods=["PATCH"])
+@app.route('/v1/users/<string:username>/password', methods=['PATCH'])
 def update_password(username):
     required_data = {
-        "old_password": {
-            "type": "string",
-            "min_length": 8
+        'old_password': {
+            'type': 'string',
+            'min_length': 8
         },
-        "new_password": {
-            "type": "string",
-            "min_length": 8
+        'new_password': {
+            'type': 'string',
+            'min_length': 8
         }
     }
 
-@app.route("/v1/users/<string:username>/permissions", methods=["GET"])
-def get_user_permissions(username):
-    CheckPermissions(request, permissions=["USER_WRITE"])
-    response = {
-        "code": 1,
-        "permissions": UsersController.get_user_permissions(username)
-    }
-    return responses.response(response)
-
-
-
-@app.route("/v1/users/<string:username>/permissions", methods=["PATCH"])
+@app.route('/v1/users/<string:username>/permissions', methods=['PATCH'])
 def update_permissions(username):
     required_data = {
-        "permissions": {
-            "type": "list"
+        'permissions': {
+            'type': 'list'
         }
     }
     try:
-        CheckPermissions(request, permissions=["USER_WRITE"])
+        CheckPermissions(request, permissions=['USER_WRITE'])
         request_data = request.json
         print(request_data)
-        UsersController.update_permissions(username, request_data["permissions"])
-        return responses.response({"code": 1})
+        UsersController.update_permissions(username, request_data['permissions'])
+        return responses.response({'code': 1})
     except DataError:
         return responses.data_error(required_data)
 

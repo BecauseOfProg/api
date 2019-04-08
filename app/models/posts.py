@@ -11,4 +11,4 @@ class Post(db.Entity):
     author = Required(str)
     timestamp = Required(int, unique=True)
 
-    _table_ = "posts"
+    _table_ = 'posts'

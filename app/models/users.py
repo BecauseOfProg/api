@@ -7,11 +7,11 @@ class User(db.Entity):
     displayname = Required(str, max_len=32)
     email = Required(str, unique=True)
     password = Required(str)
-    password_type = Required(str, default="argon2")
+    password_type = Required(str, default='argon2')
     permissions = Required(Json, default=[])
     token = Required(str)
     timestamp = Required(int)
-    picture = Required(str, default="https://cdn.becauseofprog.fr/pictures/new_member.png")
+    picture = Required(str, default='https://cdn.becauseofprog.fr/pictures/new_member.png')
     description = Optional(str)
     biography = Optional(str)
     location = Optional(str)
@@ -20,4 +20,4 @@ class User(db.Entity):
     is_activated = Required(bool, default=True)
     is_verified = Required(bool, default=False)
 
-    _table_ = "users"
+    _table_ = 'users'

@@ -12,9 +12,9 @@ from core.utils.passwords import ArgonHasher, BcryptHasher
 class UsersController:
     @staticmethod
     def fill_informations(user: User, additional_fields: list = []):
-        fields = ["username", "displayname", "timestamp", "picture", "description", "biography", "location", "socials", "is_email_public"] + additional_fields
+        fields = ['username', 'displayname', 'timestamp', 'picture', 'description', 'biography', 'location', 'socials', 'is_email_public'] + additional_fields
         if user.is_email_public:
-            fields.append("email")
+            fields.append('email')
         return user.to_dict(only=fields)
 
     @staticmethod
@@ -37,7 +37,7 @@ class UsersController:
                 raise NotFound
             if user.is_activated is False or user.is_verified is False:
                 raise NotFound
-            return UsersController.fill_informations(user, additional_fields=["permissions"])
+            return UsersController.fill_informations(user, additional_fields=['permissions'])
         except core.ObjectNotFound:
             raise NotFound
 
@@ -74,12 +74,12 @@ class UsersController:
     def update_profile(token, params):
         try:
             user = User.get(token=token)
-            user.picture = params["picture"]
-            user.displayname = params["displayname"]
-            user.description = params["description"]
-            user.biography = params["biography"]
-            user.location = params["location"]
-            user.socials = params["socials"]
+            user.picture = params['picture']
+            user.displayname = params['displayname']
+            user.description = params['description']
+            user.biography = params['biography']
+            user.location = params['location']
+            user.socials = params['socials']
             commit()
             return True
         except core.ObjectNotFound:

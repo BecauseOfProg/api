@@ -12,12 +12,12 @@ from core.utils import ids
 class PostsController:
     @staticmethod
     def fill_informations(post: Post, additional_fields: list = []):
-        fields = ["title", "url", "category", "author", "timestamp"] + additional_fields
-        if post.banner != "":
-            fields.append("banner")
-        p = post.to_dict(only=fields)
-        p['author'] = UsersController.get_one(p['author'])
-        return p
+        fields = ['title', 'url', 'category', 'author', 'timestamp'] + additional_fields
+        if post.banner != '':
+            fields.append('banner')
+        post = post.to_dict(only=fields)
+        post['author'] = UsersController.get_one(post['author'])
+        return post
 
     @staticmethod
     @db_session
@@ -37,7 +37,7 @@ class PostsController:
     @db_session
     def get_one(url):
         try:
-            return PostsController.fill_informations(Post[url], ["content"])
+            return PostsController.fill_informations(Post[url], ['content'])
         except core.ObjectNotFound:
             raise NotFound
 
@@ -59,10 +59,10 @@ class PostsController:
     def update_one(url, params):
         try:
             post = Post[url]
-            post.title = params["title"]
-            post.category = params["category"]
-            post.content = params["content"]
-            post.banner = params["banner"]
+            post.title = params['title']
+            post.category = params['category']
+            post.content = params['content']
+            post.banner = params['banner']
             commit()
         except core.ObjectNotFound:
             raise NotFound
