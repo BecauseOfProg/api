@@ -15,7 +15,9 @@ class PostsController:
         fields = ["title", "url", "category", "author", "timestamp"] + additional_fields
         if post.banner != "":
             fields.append("banner")
-        return post.to_dict(only=fields)
+        p = post.to_dict(only=fields)
+        p['author'] = UsersController.get_one(p['author'])
+        return p
 
     @staticmethod
     @db_session
