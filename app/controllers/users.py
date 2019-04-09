@@ -71,15 +71,12 @@ class UsersController:
 
     @staticmethod
     @db_session
-    def update_profile(token, params):
+    def update_profile(token, params, optional_data):
         try:
             user = User.get(token=token)
-            user.picture = params['picture']
-            user.displayname = params['displayname']
-            user.description = params['description']
-            user.biography = params['biography']
-            user.location = params['location']
-            user.socials = params['socials']
+            for field in optional_data:
+                if field in params:
+                    setattr(user, field, params[field])
             commit()
             return True
         except core.ObjectNotFound:

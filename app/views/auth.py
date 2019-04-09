@@ -19,12 +19,11 @@ def create_session():
         }
     }
     try:
-        CheckBody(request, required_data=required_data)
-        request_data = request.json
-        data = AuthController.create_session(email=request_data['email'], password=request_data['password'])
+        data = CheckBody.call(request, required_data=required_data, optional_data={})
+        user_data = AuthController.create_session(email=data['email'], password=data['password'])
         response = {
             'code': 1,
-            'data': data
+            'data': user_data
         }
         return responses.response(response)
     except DataError:

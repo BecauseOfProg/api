@@ -60,14 +60,13 @@ def create_post():
         }
     }
     try:
-        CheckBody(request, required_data=required_data)
+        data = CheckBody.call(request, required_data=required_data, optional_data={})
         CheckPermissions(request, permissions=['POST_WRITE'])
-        request_data = request.json
         author = UsersController.get_one_by_token(request.headers.get('Authorization'))
-        PostsController.create_one(title=request_data['title'],
-                                   url=request_data['url'],
-                                   category=request_data['category'],
-                                   content=request_data['content'],
+        PostsController.create_one(title=data['title'],
+                                   url=data['url'],
+                                   category=data['category'],
+                                   content=data['content'],
                                    author_username=author['username'])
         return responses.response({'code': 1})
     except DataError:
@@ -75,7 +74,7 @@ def create_post():
 
 @app.route('/v1/posts/<string:url>', methods=['PATCH'])
 def edit_post(url):
-    required_data = {
+    optional_data = {
         'title': {
             'type': 'string',
             'min_length': 5,
@@ -93,18 +92,13 @@ def edit_post(url):
             'min_length': 50
         }
     }
-    try:
-        PostsController.get_one(url)
-        CheckBody(request, required_data=required_data)
-        CheckPermissions(request, permissions=['POST_WRITE'])
-        request_data = request.json
-        PostsController.update_one(url=url,
-                                   title=request_data['title'],
-                                   category=request_data['category'],
-                                   content=request_data['content'])
-        return responses.response({'code': 1})
-    except DataError:
-        return responses.data_error(required_data)
+    PostsController.get_one(url)
+    data = CheckBody.call(request, required_data={}, optional_data=optional_data)
+    CheckPermissions(request, permissions=['POST_WRITE'])
+    PostsController.update_one(url=url,
+                               params=data['optional'],
+                               optional_data=optional_data)
+    return responses.response({'code': 1})
 
 @app.route('/v1/posts/<string:url>', methods=['DELETE'])
 def delete_post(url):

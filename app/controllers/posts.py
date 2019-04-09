@@ -55,13 +55,12 @@ class PostsController:
 
     @staticmethod
     @db_session
-    def update_one(url, params):
+    def update_one(url, params, optional_data):
         try:
             post = Post[url]
-            post.title = params['title']
-            post.category = params['category']
-            post.content = params['content']
-            post.banner = params['banner']
+            for field in optional_data:
+                if field in params:
+                    setattr(post, field, params[field])
             commit()
         except core.ObjectNotFound:
             raise NotFound

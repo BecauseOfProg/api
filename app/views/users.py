@@ -27,11 +27,10 @@ def get_all_users():
         }
     }
     try:
-        CheckBody(request, required_data=required_data)
-        request_data = request.json
-        UsersController.create_one(email=request_data['email'],
-                                   username=request_data['username'],
-                                   password=request_data['password'])
+        data = CheckBody.call(request, required_data=required_data, optional_data={})
+        UsersController.create_one(email=data['email'],
+                                   username=data['username'],
+                                   password=data['password'])
         return responses.response({'code': 1})
     except DataError:
         return responses.data_error(required_data)
@@ -55,7 +54,7 @@ def get_user_permissions(username):
 
 @app.route('/v1/users/<string:username>', methods=['PATCH'])
 def update_profile(username):
-    required_data = {
+    optional_data = {
         'displayname': {
             'type': 'string',
             'min_length': 2,
@@ -77,18 +76,15 @@ def update_profile(username):
             'type': 'list<dict>'
         }
     }
-    try:
-        CheckBody(request, required_data)
-        CheckAuth(request)
-        request_data = request.json
-        token = request.headers.get('Authorization')
-        if UsersController.get_one_by_token(token)['username'] != username:
-            raise NotFound
-        UsersController.update_profile(token=token,
-                                   params=request_data)
-        return responses.response({'code': 1})
-    except DataError:
-        return responses.data_error(required_data)
+    data = CheckBody.call(request, required_data={}, optional_data=optional_data)
+    CheckAuth(request)
+    token = request.headers.get('Authorization')
+    if UsersController.get_one_by_token(token)['username'] != username:
+        raise NotFound
+    UsersController.update_profile(token=token,
+                                   params=data['optional'],
+                                   optional_data=optional_data)
+    return responses.response({'code': 1})
 
 @app.route('/v1/users/<string:username>/email', methods=['PATCH'])
 def update_email(username):
@@ -122,7 +118,6 @@ def update_permissions(username):
     try:
         CheckPermissions(request, permissions=['USER_WRITE'])
         request_data = request.json
-        print(request_data)
         UsersController.update_permissions(username, request_data['permissions'])
         return responses.response({'code': 1})
     except DataError:
