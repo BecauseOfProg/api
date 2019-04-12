@@ -1,7 +1,7 @@
 <div align="center">
     <img src="https://cdn.becauseofprog.fr/logos/bop-transparent.png" width="100" />
     <h1>BecauseOfProg - API</h1>
-    <a href="LICENSE">License</a> - <a href="https://github.com/BecauseOfProg/api-docs">Documentation</a>
+    <a href="https://git.becauseofprog.fr/bop/api/src/branch/master/LICENSE">License</a> - <a href="https://github.com/BecauseOfProg/api-docs">Documentation</a>
 </div>
 
 This is the main API for all the BecauseOfProg. It's an interface to interact with users, posts and to use authentification on other websites.
