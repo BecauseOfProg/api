@@ -22,7 +22,7 @@ def get_all_users():
 def get_one_user(username):
     response = {
         'code': 1,
-        'user': UsersController.get_one(username)
+        'data': UsersController.get_one(username)
     }
     return responses.response(response)
 
@@ -31,7 +31,7 @@ def get_user_permissions(username):
     CheckPermissions(request, permissions=['USER_WRITE'])
     response = {
         'code': 1,
-        'permissions': UsersController.get_user_permissions(username)
+        'data': UsersController.get_user_permissions(username)
     }
     return responses.response(response)
 

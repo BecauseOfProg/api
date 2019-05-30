@@ -13,7 +13,7 @@ from main import app
 def get_all_posts():
     response = {
         'code': 1,
-        'posts': PostsController.get_all()
+        'data': PostsController.get_all()
     }
     return responses.response(response)
 
@@ -21,7 +21,7 @@ def get_all_posts():
 def get_last_post():
     response = {
         'code': 1,
-        'post': PostsController.get_last()
+        'data': PostsController.get_last()
     }
     return responses.response(response)
 
@@ -29,7 +29,7 @@ def get_last_post():
 def get_one_post(url):
     response = {
         'code': 1,
-        'post': PostsController.get_one(url)
+        'data': PostsController.get_one(url)
     }
     return responses.response(response)
 
