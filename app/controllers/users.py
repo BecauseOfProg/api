@@ -19,6 +19,14 @@ class UsersController:
 
     @staticmethod
     @db_session
+    def get_all():
+        users = list(User.select())
+        for user in users:
+            users[users.index(user)] = UsersController.fill_informations(user)
+        return users
+
+    @staticmethod
+    @db_session
     def get_one(username):
         try:
             user = User[username]

@@ -9,8 +9,34 @@ from core import responses
 from core.exceptions import DataError
 from main import app
 
-@app.route('/v1/users', methods=['POST'])
+@app.route('/v1/users', methods=['GET'])
 def get_all_users():
+    CheckPermissions(request, permissions=['USER_WRITE'])
+    response = {
+        'code': 1,
+        'data': UsersController.get_all()
+    }
+    return responses.response(response)
+
+@app.route('/v1/users/<string:username>', methods=['GET'])
+def get_one_user(username):
+    response = {
+        'code': 1,
+        'user': UsersController.get_one(username)
+    }
+    return responses.response(response)
+
+@app.route('/v1/users/<string:username>/permissions', methods=['GET'])
+def get_user_permissions(username):
+    CheckPermissions(request, permissions=['USER_WRITE'])
+    response = {
+        'code': 1,
+        'permissions': UsersController.get_user_permissions(username)
+    }
+    return responses.response(response)
+
+@app.route('/v1/users', methods=['POST'])
+def create_user():
     required_data = {
         'email': {
             'type': 'string',
@@ -34,23 +60,6 @@ def get_all_users():
         return responses.response({'code': 1})
     except DataError:
         return responses.data_error(required_data)
-
-@app.route('/v1/users/<string:username>', methods=['GET'])
-def get_one_user(username):
-    response = {
-        'code': 1,
-        'user': UsersController.get_one(username)
-    }
-    return responses.response(response)
-
-@app.route('/v1/users/<string:username>/permissions', methods=['GET'])
-def get_user_permissions(username):
-    CheckPermissions(request, permissions=['USER_WRITE'])
-    response = {
-        'code': 1,
-        'permissions': UsersController.get_user_permissions(username)
-    }
-    return responses.response(response)
 
 @app.route('/v1/users/<string:username>', methods=['PATCH'])
 def update_profile(username):
