@@ -61,17 +61,23 @@ def create_blog_post():
             'min_length': 20
         }
     }
+    optional_data = {
+        'locale': {
+            'type': 'string',
+            'default': 'fr'
+        }
+    }
     try:
-        data = CheckBody.call(request, required_data=required_data, optional_data={})
+        data = CheckBody.call(request, required_data=required_data, optional_data=optional_data)
         CheckPermissions(request, permissions=['BLOG_WRITE'])
         author = UsersController.get_one_by_token(request.headers.get('Authorization'))
         data['author_username'] = author['username']
         BlogPostsController.create_one(params=data,
-                                     optional_data={}
+                                     optional_data=optional_data
                                      )
         return responses.response({'code': 1})
     except DataError:
-        return responses.data_error(required_data, {})
+        return responses.data_error(required_data, optional_data)
 
 @app.route('/v1/blog-posts/<string:url>', methods=['GET'])
 def get_one_blog_post(url):
