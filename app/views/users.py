@@ -57,7 +57,7 @@ def create_user():
         UsersController.create_one(email=data['email'],
                                    username=data['username'],
                                    password=data['password'])
-        return responses.response({'code': 1})
+        return responses.response({'code': 1}, 201)
     except DataError:
         return responses.data_error(required_data)
 
@@ -93,7 +93,7 @@ def update_profile(username):
     UsersController.update_profile(token=token,
                                    params=data['optional'],
                                    optional_data=optional_data)
-    return responses.response({'code': 1})
+    return responses.no_content()
 
 @app.route('/v1/users/<string:username>/email', methods=['PATCH'])
 def update_email(username):
@@ -128,7 +128,7 @@ def update_permissions(username):
         CheckPermissions(request, permissions=['USER_WRITE'])
         request_data = request.json
         UsersController.update_permissions(username, request_data['permissions'])
-        return responses.response({'code': 1})
+        return responses.no_content()
     except DataError:
         return responses.data_error(required_data)
 

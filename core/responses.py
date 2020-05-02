@@ -1,8 +1,12 @@
 import json
 
 
-def response(data):
-    return json.dumps(data), 200, {'Content-Type': 'application/json'}
+def response(data, code = 200):
+    return json.dumps(data), code, {'Content-Type': 'application/json'}
+
+
+def no_content():
+    return response('', 204)
 
 
 def invalid_username_or_password():

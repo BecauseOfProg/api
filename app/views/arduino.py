@@ -90,7 +90,7 @@ def create_project():
         ArduinoController.create_one(params=data,
                                      optional_data=optional_data
                                      )
-        return responses.response({'code': 1})
+        return responses.response({'code': 1}, 201)
     except DataError:
         return responses.data_error(required_data, optional_data)
 
@@ -140,7 +140,7 @@ def edit_project(url):
         ArduinoController.update_one(url=url,
                                      params=data['optional'],
                                      optional_data=optional_data)
-        return responses.response({'code': 1})
+        return responses.no_content()
     except DataError:
         return responses.data_error({}, optional_data)
 
@@ -152,6 +152,4 @@ def delete_project(url):
     if UsersController.get_one_by_token(token)['username'] != project['author']['username']:
         raise Unauthorized
     ArduinoController.delete_one(url)
-    return responses.response({
-        'code': 1
-    })
+    return responses.no_content()

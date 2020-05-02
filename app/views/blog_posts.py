@@ -75,7 +75,7 @@ def create_blog_post():
         BlogPostsController.create_one(params=data,
                                      optional_data=optional_data
                                      )
-        return responses.response({'code': 1})
+        return responses.response({'code': 1}, 201)
     except DataError:
         return responses.data_error(required_data, optional_data)
 
@@ -124,7 +124,7 @@ def edit_blog_post(url):
         BlogPostsController.update_one(url=url,
                                        params=data['optional'],
                                        optional_data=optional_data)
-        return responses.response({'code': 1})
+        return responses.no_content()
     except DataError:
         return responses.data_error({}, optional_data)
 
@@ -133,6 +133,4 @@ def delete_blog_post(url):
     post = BlogPostsController.get_one(url)
     CheckPermissions(request, permissions=['BLOG_WRITE'])
     BlogPostsController.delete_one(url)
-    return responses.response({
-        'code': 1
-    })
+    return responses.no_content()
