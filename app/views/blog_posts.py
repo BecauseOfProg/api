@@ -34,7 +34,7 @@ def get_all_blog_posts():
         posts = BlogPostsController.filter_by_type(posts, type)
 
     (posts, pages) = BlogPostsController.paginate(posts, page)
-    posts = BlogPostsController.multi_fill_information(posts)
+    posts = BlogPostsController.multi_fill_information(posts, True)
 
     response = {
         'code': 1,
