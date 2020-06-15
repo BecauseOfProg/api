@@ -2,5 +2,5 @@ class DataError(Exception):
     pass
 
 
-class InvalidCreds(Exception):
+class InvalidCredentials(Exception):
     pass

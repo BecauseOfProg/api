@@ -16,21 +16,18 @@ class BlogPostsController:
         return posts, pages
 
     @staticmethod
-    def fill_informations(post: BlogPost, without_content: bool = False):
-        if without_content:
-            to_exclude = 'content'
-        else:
-            to_exclude = None
-        p = post.to_dict(exclude=to_exclude)
-        p['author'] = UsersController.get_one(p['author'])
-        return p
+    def fill_information(post: BlogPost, without_content: bool = False):
+        to_exclude = 'content' if without_content else None
+        post = post.to_dict(exclude=to_exclude)
+        post['author'] = UsersController.get_one(post['author'])
+        return post
 
     @staticmethod
     @db_session
     def multi_fill_information(posts: [BlogPost], without_content: bool = False):
         posts = list(posts)
         for post in posts:
-            posts[posts.index(post)] = BlogPostsController.fill_informations(post, without_content)
+            posts[posts.index(post)] = BlogPostsController.fill_information(post, without_content)
         return posts
 
     @staticmethod
@@ -52,13 +49,13 @@ class BlogPostsController:
     @db_session
     def get_last():
         posts = list(BlogPost.select().order_by(desc(BlogPost.timestamp)))
-        return BlogPostsController.fill_informations(posts[0])
+        return BlogPostsController.fill_information(posts[0])
 
     @staticmethod
     @db_session
     def get_one(url):
         try:
-            return BlogPostsController.fill_informations(BlogPost[url])
+            return BlogPostsController.fill_information(BlogPost[url])
         except core.ObjectNotFound:
             raise NotFound
 

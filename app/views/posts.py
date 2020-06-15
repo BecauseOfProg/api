@@ -17,6 +17,7 @@ def get_all_posts():
     }
     return responses.response(response)
 
+
 @app.route('/v1/posts/last', methods=['GET'])
 def get_last_post():
     response = {
@@ -24,6 +25,7 @@ def get_last_post():
         'data': PostsController.get_last()
     }
     return responses.response(response)
+
 
 @app.route('/v1/posts/<string:url>', methods=['GET'])
 def get_one_post(url):
@@ -73,6 +75,7 @@ def create_post():
     except DataError:
         return responses.data_error(required_data)
 
+
 @app.route('/v1/posts/<string:url>', methods=['PATCH'])
 def edit_post(url):
     optional_data = {
@@ -100,6 +103,7 @@ def edit_post(url):
                                params=data['optional'],
                                optional_data=optional_data)
     return responses.no_content()
+
 
 @app.route('/v1/posts/<string:url>', methods=['DELETE'])
 def delete_post(url):

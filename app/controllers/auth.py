@@ -1,7 +1,7 @@
 from pony.orm import db_session
 from app.models.users import User
 from app.controllers.users import UsersController
-from core.exceptions import InvalidCreds
+from core.exceptions import InvalidCredentials
 from core.utils.passwords import ArgonHasher, BcryptHasher
 
 
@@ -17,7 +17,7 @@ class AuthController:
                         'token': user.token
                     }
                 else:
-                    raise InvalidCreds
+                    raise InvalidCredentials
             else:
                 if ArgonHasher.are_password_same(user.password, password):
                     return {
@@ -25,6 +25,6 @@ class AuthController:
                         'token': user.token
                     }
                 else:
-                    raise InvalidCreds
+                    raise InvalidCredentials
 
-        raise InvalidCreds
+        raise InvalidCredentials

@@ -4,7 +4,6 @@ from .config import Config
 
 
 class ApiDatabase:
-
     @staticmethod
     def create():
         config = Config()
@@ -14,8 +13,8 @@ class ApiDatabase:
         password = config.get('db', 'password')
         database = Database()
         database.bind(provider='mysql',
-                           host=host,
-                           user=username,
-                           passwd=password,
-                           db=db)
+                      host=host,
+                      user=username,
+                      passwd=password,
+                      db=db)
         return database

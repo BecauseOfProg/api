@@ -6,7 +6,7 @@ from app.controllers.auth import AuthController
 from app.middlewares.auth import CheckAuth
 from app.middlewares.body import CheckBody
 from core import responses
-from core.exceptions import InvalidCreds, DataError
+from core.exceptions import InvalidCredentials, DataError
 from main import app
 
 
@@ -30,7 +30,7 @@ def create_session():
         return responses.response(response)
     except DataError:
         return responses.data_error(required_data)
-    except InvalidCreds:
+    except InvalidCredentials:
         return responses.invalid_username_or_password()
 
 

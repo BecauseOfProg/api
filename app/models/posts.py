@@ -6,7 +6,7 @@ class Post(db.Entity):
     url = PrimaryKey(str, max_len=64)
     title = Required(str, max_len=64)
     category = Required(str, max_len=20)
-    banner = Optional(str, default="")
+    banner = Optional(str, default='')
     content = Required(LongStr)
     author = Required(str)
     timestamp = Required(int, unique=True)

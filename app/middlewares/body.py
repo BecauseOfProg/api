@@ -18,5 +18,4 @@ class CheckBody:
             if field in request_data:
                 parsed_data['optional'][field] = request_data[field]
 
-
         return parsed_data

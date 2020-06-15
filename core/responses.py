@@ -1,8 +1,5 @@
-import json
-
-
-def response(data, code = 200):
-    return json.dumps(data), code, {'Content-Type': 'application/json'}
+def response(data, code=200):
+    return data, code, {'Content-Type': 'application/json'}
 
 
 def no_content():
@@ -10,23 +7,31 @@ def no_content():
 
 
 def invalid_username_or_password():
-    return json.dumps({
+    response = {
         'code': 0,
         'message': 'Invalid email address and/or password'
-    }), 400, {'Content-Type': 'application/json'}
+    }
+    return response, 400, {'Content-Type': 'application/json'}
 
 
-def data_error(required_data, optional_data = {}):
-    return json.dumps({
+def data_error(required_data, optional_data=None):
+    if optional_data is None:
+        optional_data = {}
+
+    response = {
         'code': 0,
-        'message': 'Data error',
+        'message':
+            'Error on the passed data. Try looking at the API documentation for required and optional data : '
+            'https://github.com/BecauseOfProg/api-docs',
         'required_data': required_data,
         'optional_data': optional_data
-    }), 400, {'Content-Type': 'application/json'}
+    }
+    return response, 400, {'Content-Type': 'application/json'}
 
 
 def not_unique():
-    return json.dumps({
+    response = {
         'code': 0,
-        'message': 'Already exists'
-    }), 400, {'Content-Type': 'application/json'}
+        'message': 'The resource already exists. Try changing the identifier (URL or username)'
+    }
+    return response, 400, {'Content-Type': 'application/json'}

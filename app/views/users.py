@@ -9,6 +9,7 @@ from core import responses
 from core.exceptions import DataError
 from main import app
 
+
 @app.route('/v1/users', methods=['GET'])
 def get_all_users():
     CheckPermissions(request, permissions=['USER_WRITE'])
@@ -18,6 +19,7 @@ def get_all_users():
     }
     return responses.response(response)
 
+
 @app.route('/v1/users/<string:username>', methods=['GET'])
 def get_one_user(username):
     response = {
@@ -25,6 +27,7 @@ def get_one_user(username):
         'data': UsersController.get_one(username)
     }
     return responses.response(response)
+
 
 @app.route('/v1/users/<string:username>/permissions', methods=['GET'])
 def get_user_permissions(username):
@@ -34,6 +37,7 @@ def get_user_permissions(username):
         'data': UsersController.get_user_permissions(username)
     }
     return responses.response(response)
+
 
 @app.route('/v1/users', methods=['POST'])
 def create_user():
@@ -60,6 +64,7 @@ def create_user():
         return responses.response({'code': 1}, 201)
     except DataError:
         return responses.data_error(required_data)
+
 
 @app.route('/v1/users/<string:username>', methods=['PATCH'])
 def update_profile(username):
@@ -95,6 +100,7 @@ def update_profile(username):
                                    optional_data=optional_data)
     return responses.no_content()
 
+
 @app.route('/v1/users/<string:username>/email', methods=['PATCH'])
 def update_email(username):
     required_data = {
@@ -103,6 +109,7 @@ def update_email(username):
             'min_length': 6
         }
     }
+
 
 @app.route('/v1/users/<string:username>/password', methods=['PATCH'])
 def update_password(username):
@@ -116,6 +123,7 @@ def update_password(username):
             'min_length': 8
         }
     }
+
 
 @app.route('/v1/users/<string:username>/permissions', methods=['PATCH'])
 def update_permissions(username):
@@ -131,4 +139,3 @@ def update_permissions(username):
         return responses.no_content()
     except DataError:
         return responses.data_error(required_data)
-

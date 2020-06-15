@@ -8,9 +8,9 @@ from .auth import CheckAuth
 class CheckPermissions:
     def __init__(self, request, permissions):
         CheckAuth(request)
-        user = UsersController.get_one_by_token(request.headers.get("Authorization"))
+        user = UsersController.get_one_by_token(request.headers.get('Authorization'))
         for permission in permissions:
-            if permission in user["permissions"]:
+            if permission in user['permissions']:
                 pass
             else:
                 raise Forbidden

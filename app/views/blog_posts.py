@@ -15,10 +15,13 @@ def get_all_blog_posts():
         page = request.args.get('page', '1')
         page = int(page)
     except ValueError:
-        return responses.response({
-            'code': 0,
-            'message': 'Invalid page number. Required type : integer'
-        }, 400)
+        return responses.response(
+            {
+                'code': 0,
+                'message': 'Invalid page number. Required type : integer'
+            },
+            400
+        )
 
     posts = BlogPostsController.get_all()
 
@@ -39,6 +42,7 @@ def get_all_blog_posts():
         'data': posts
     }
     return responses.response(response)
+
 
 @app.route('/v1/blog-posts/last', methods=['GET'])
 def get_last_blog_post():
@@ -96,11 +100,12 @@ def create_blog_post():
         author = UsersController.get_one_by_token(request.headers.get('Authorization'))
         data['author_username'] = author['username']
         BlogPostsController.create_one(params=data,
-                                     optional_data=optional_data
-                                     )
+                                       optional_data=optional_data
+                                       )
         return responses.response({'code': 1}, 201)
     except DataError:
         return responses.data_error(required_data, optional_data)
+
 
 @app.route('/v1/blog-posts/<string:url>', methods=['GET'])
 def get_one_blog_post(url):
@@ -109,6 +114,7 @@ def get_one_blog_post(url):
         'data': BlogPostsController.get_one(url)
     }
     return responses.response(response)
+
 
 @app.route('/v1/blog-posts/<string:url>', methods=['PATCH'])
 def edit_blog_post(url):
@@ -150,6 +156,7 @@ def edit_blog_post(url):
         return responses.no_content()
     except DataError:
         return responses.data_error({}, optional_data)
+
 
 @app.route('/v1/blog-posts/<string:url>', methods=['DELETE'])
 def delete_blog_post(url):

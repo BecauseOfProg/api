@@ -11,7 +11,7 @@ class User(db.Entity):
     permissions = Required(Json, default=[])
     token = Required(str)
     timestamp = Required(int)
-    picture = Required(str, default='https://cdn.becauseofprog.fr/pictures/new_member.png')
+    picture = Required(str, default='https://cdn.becauseofprog.fr/v2/sites/becauseofprog.fr/pictures/new_member.png')
     description = Optional(str)
     biography = Optional(str)
     location = Optional(str)
