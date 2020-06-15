@@ -11,14 +11,32 @@ from main import app
 
 @app.route('/v1/blog-posts', methods=['GET'])
 def get_all_blog_posts():
-    page = request.args.get('page', '1')
-    page = int(page)
-    (data, pages) = BlogPostsController.get_page(page)
+    try:
+        page = request.args.get('page', '1')
+        page = int(page)
+    except ValueError:
+        return responses.response({
+            'code': 0,
+            'message': 'Invalid page number. Required type : integer'
+        }, 400)
+
+    posts = BlogPostsController.get_all()
+
+    category = request.args.get('category', None)
+    if category is not None:
+        posts = BlogPostsController.filter_by_category(posts, category)
+
+    type = request.args.get('type', None)
+    if type is not None:
+        posts = BlogPostsController.filter_by_type(posts, type)
+
+    (posts, pages) = BlogPostsController.paginate(posts, page)
+    posts = BlogPostsController.multi_fill_information(posts)
 
     response = {
         'code': 1,
         'pages': pages,
-        'data': data
+        'data': posts
     }
     return responses.response(response)
 

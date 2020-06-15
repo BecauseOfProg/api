@@ -9,6 +9,13 @@ from app.models.blog_posts import BlogPost
 
 class BlogPostsController:
     @staticmethod
+    @db_session
+    def paginate(posts, page):
+        posts = posts.page(page)
+        pages = math.ceil(len(posts) / 10)
+        return posts, pages
+
+    @staticmethod
     def fill_informations(post: BlogPost, without_content: bool = False):
         if without_content:
             to_exclude = 'content'
@@ -20,13 +27,26 @@ class BlogPostsController:
 
     @staticmethod
     @db_session
-    def get_page(page):
-        start = (page - 1) * 10
-        posts = list(BlogPost.select().order_by(desc(BlogPost.timestamp)))[start:start+10]
-        pages = math.ceil(BlogPost.select().count() / 10)
+    def multi_fill_information(posts: [BlogPost], without_content: bool = False):
+        posts = list(posts)
         for post in posts:
-            posts[posts.index(post)] = BlogPostsController.fill_informations(post, True)
-        return posts, pages
+            posts[posts.index(post)] = BlogPostsController.fill_informations(post, without_content)
+        return posts
+
+    @staticmethod
+    @db_session
+    def get_all():
+        return BlogPost.select().sort_by(desc(BlogPost.timestamp))
+
+    @staticmethod
+    @db_session
+    def filter_by_category(posts, category):
+        return posts.where(category=category)
+
+    @staticmethod
+    @db_session
+    def filter_by_type(posts, type):
+        return posts.where(type=type)
 
     @staticmethod
     @db_session
