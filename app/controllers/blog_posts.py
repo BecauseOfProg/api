@@ -1,4 +1,5 @@
 import time
+import math
 
 from pony.orm import *
 from werkzeug.exceptions import NotFound
@@ -19,11 +20,13 @@ class BlogPostsController:
 
     @staticmethod
     @db_session
-    def get_all():
-        posts = list(BlogPost.select().order_by(desc(BlogPost.timestamp)))
+    def get_page(page):
+        start = (page - 1) * 10
+        posts = list(BlogPost.select().order_by(desc(BlogPost.timestamp)))[start:start+10]
+        pages = math.ceil(BlogPost.select().count() / 10)
         for post in posts:
             posts[posts.index(post)] = BlogPostsController.fill_informations(post, True)
-        return posts
+        return posts, pages
 
     @staticmethod
     @db_session

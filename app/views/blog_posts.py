@@ -11,9 +11,14 @@ from main import app
 
 @app.route('/v1/blog-posts', methods=['GET'])
 def get_all_blog_posts():
+    page = request.args.get('page', '1')
+    page = int(page)
+    (data, pages) = BlogPostsController.get_page(page)
+
     response = {
         'code': 1,
-        'data': BlogPostsController.get_all()
+        'pages': pages,
+        'data': data
     }
     return responses.response(response)
 
