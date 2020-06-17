@@ -45,10 +45,7 @@ class BlogPostsController:
     @staticmethod
     @db_session
     def get_one(url):
-        try:
-            return BlogPostsController.fill_information(BlogPost[url], False)
-        except core.ObjectNotFound:
-            raise NotFound
+        return BlogPostsController.fill_information(BlogPost[url], False)
 
     @staticmethod
     @db_session
@@ -76,20 +73,14 @@ class BlogPostsController:
     @staticmethod
     @db_session
     def update_one(url, params, optional_data):
-        try:
-            post = BlogPost[url]
-            for field in optional_data:
-                if field in params:
-                    setattr(post, field, params[field])
-            commit()
-        except core.ObjectNotFound:
-            raise NotFound
+        post = BlogPost[url]
+        for field in optional_data:
+            if field in params:
+                setattr(post, field, params[field])
+        commit()
 
     @staticmethod
     @db_session
     def delete_one(url):
-        try:
-            BlogPost[url].delete()
-            return True
-        except core.ObjectNotFound:
-            raise NotFound
+        BlogPost[url].delete()
+        return True

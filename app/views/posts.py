@@ -13,30 +13,27 @@ from main import app
 def get_all_posts():
     posts = PostsController.fetch_all()
     posts, pages = paginate(request, posts)
-    response = {
+    return responses.response({
         'code': 1,
         'pages': pages,
         'data': PostsController.multi_fill_information(posts)
-    }
-    return responses.response(response)
+    })
 
 
 @app.route('/v1/posts/last', methods=['GET'])
 def get_last_post():
-    response = {
+    return responses.response({
         'code': 1,
         'data': PostsController.get_last()
-    }
-    return responses.response(response)
+    })
 
 
 @app.route('/v1/posts/<string:url>', methods=['GET'])
 def get_one_post(url):
-    response = {
+    return responses.response({
         'code': 1,
         'data': PostsController.get_one(url)
-    }
-    return responses.response(response)
+    })
 
 
 @app.route('/v1/posts', methods=['POST'])
@@ -73,7 +70,7 @@ def create_post():
                                content=data['content'],
                                author_username=author['username'],
                                banner=data['banner'])
-    return responses.response({'code': 1}, 201)
+    return responses.created()
 
 
 @app.route('/v1/posts/<string:url>', methods=['PATCH'])

@@ -12,18 +12,12 @@ class AuthController:
         for user in User.select(lambda u: u.email == email):
             if user.password_type == 'bcrypt':
                 if BcryptHasher.are_password_same(user.password, password):
-                    return {
-                        'user': UsersController.get_one_by_token(user.token),
-                        'token': user.token
-                    }
+                    return UsersController.get_one_by_token(user.token), user.token
                 else:
                     raise InvalidCredentials
             else:
                 if ArgonHasher.are_password_same(user.password, password):
-                    return {
-                        'user': UsersController.get_one_by_token(user.token),
-                        'token': user.token
-                    }
+                    return UsersController.get_one_by_token(user.token), user.token
                 else:
                     raise InvalidCredentials
 

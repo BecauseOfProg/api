@@ -12,30 +12,27 @@ from main import app
 @app.route('/v1/users', methods=['GET'])
 def get_all_users():
     CheckPermissions(request, permissions=['USER_WRITE'])
-    response = {
+    return responses.response({
         'code': 1,
         'data': UsersController.get_all()
-    }
-    return responses.response(response)
+    })
 
 
 @app.route('/v1/users/<string:username>', methods=['GET'])
 def get_one_user(username):
-    response = {
+    return responses.response({
         'code': 1,
         'data': UsersController.get_one(username)
-    }
-    return responses.response(response)
+    })
 
 
 @app.route('/v1/users/<string:username>/permissions', methods=['GET'])
 def get_user_permissions(username):
     CheckPermissions(request, permissions=['USER_WRITE'])
-    response = {
+    return responses.response({
         'code': 1,
         'data': UsersController.get_user_permissions(username)
-    }
-    return responses.response(response)
+    })
 
 
 @app.route('/v1/users', methods=['POST'])
@@ -59,7 +56,7 @@ def create_user():
     UsersController.create_one(email=data['email'],
                                username=data['username'],
                                password=data['password'])
-    return responses.response({'code': 1}, 201)
+    return responses.created()
 
 
 @app.route('/v1/users/<string:username>', methods=['PATCH'])

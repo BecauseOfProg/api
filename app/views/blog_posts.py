@@ -24,21 +24,19 @@ def get_all_blog_posts():
     posts, pages = paginate(request, posts)
     posts = BlogPostsController.multi_fill_information(posts)
 
-    response = {
+    return responses.response({
         'code': 1,
         'pages': pages,
         'data': posts
-    }
-    return responses.response(response)
+    })
 
 
 @app.route('/v1/blog-posts/last', methods=['GET'])
 def get_last_blog_post():
-    response = {
+    return responses.response({
         'code': 1,
         'data': BlogPostsController.get_last()
-    }
-    return responses.response(response)
+    })
 
 
 @app.route('/v1/blog-posts', methods=['POST'])
@@ -89,16 +87,15 @@ def create_blog_post():
     BlogPostsController.create_one(params=data,
                                    optional_data=optional_data
                                    )
-    return responses.response({'code': 1}, 201)
+    return responses.created()
 
 
 @app.route('/v1/blog-posts/<string:url>', methods=['GET'])
 def get_one_blog_post(url):
-    response = {
+    return responses.response({
         'code': 1,
         'data': BlogPostsController.get_one(url)
-    }
-    return responses.response(response)
+    })
 
 
 @app.route('/v1/blog-posts/<string:url>', methods=['PATCH'])
