@@ -9,34 +9,37 @@ from app.models.posts import Post
 
 class PostsController:
     @staticmethod
-    def fill_information(post: Post, additional_fields=None):
-        if additional_fields is None:
-            additional_fields = []
-
-        fields = ['title', 'url', 'category', 'author', 'timestamp', 'banner'] + additional_fields
-        post = post.to_dict(only=fields)
+    @db_session
+    def fill_information(post: Post, without_content: bool = True):
+        to_exclude = 'content' if without_content else None
+        post = post.to_dict(exclude=to_exclude)
         post['author'] = UsersController.get_one(post['author'])
         return post
 
     @staticmethod
     @db_session
-    def get_all():
-        posts = list(Post.select().order_by(desc(Post.timestamp)))
+    def multi_fill_information(posts: [Post], without_content: bool = True):
+        posts = list(posts)
         for post in posts:
-            posts[posts.index(post)] = PostsController.fill_information(post)
+            posts[posts.index(post)] = PostsController.fill_information(post, without_content)
         return posts
 
     @staticmethod
     @db_session
+    def fetch_all():
+        return Post.select().sort_by(desc(Post.timestamp))
+
+    @staticmethod
+    @db_session
     def get_last():
-        posts = list(Post.select().order_by(desc(Post.timestamp)))
-        return PostsController.fill_information(posts[0])
+        posts = PostsController.fetch_all()
+        return PostsController.fill_information(posts.first(), False)
 
     @staticmethod
     @db_session
     def get_one(url):
         try:
-            return PostsController.fill_information(Post[url], ['content'])
+            return PostsController.fill_information(Post[url], False)
         except core.ObjectNotFound:
             raise NotFound
 

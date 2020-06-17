@@ -1,6 +1,4 @@
 import time
-import math
-
 from pony.orm import *
 from werkzeug.exceptions import NotFound
 from app.controllers.users import UsersController
@@ -9,14 +7,7 @@ from app.models.blog_posts import BlogPost
 
 class BlogPostsController:
     @staticmethod
-    @db_session
-    def paginate(posts, page):
-        posts = posts.page(page)
-        pages = math.ceil(len(posts) / 10)
-        return posts, pages
-
-    @staticmethod
-    def fill_information(post: BlogPost, without_content: bool = False):
+    def fill_information(post: BlogPost, without_content: bool = True):
         to_exclude = 'content' if without_content else None
         post = post.to_dict(exclude=to_exclude)
         post['author'] = UsersController.get_one(post['author'])
@@ -24,7 +15,7 @@ class BlogPostsController:
 
     @staticmethod
     @db_session
-    def multi_fill_information(posts: [BlogPost], without_content: bool = False):
+    def multi_fill_information(posts: [BlogPost], without_content: bool = True):
         posts = list(posts)
         for post in posts:
             posts[posts.index(post)] = BlogPostsController.fill_information(post, without_content)
@@ -32,7 +23,7 @@ class BlogPostsController:
 
     @staticmethod
     @db_session
-    def get_all():
+    def fetch_all():
         return BlogPost.select().sort_by(desc(BlogPost.timestamp))
 
     @staticmethod
@@ -48,14 +39,14 @@ class BlogPostsController:
     @staticmethod
     @db_session
     def get_last():
-        posts = list(BlogPost.select().order_by(desc(BlogPost.timestamp)))
-        return BlogPostsController.fill_information(posts[0])
+        posts = BlogPostsController.fetch_all()
+        return BlogPostsController.fill_information(posts.first(), False)
 
     @staticmethod
     @db_session
     def get_one(url):
         try:
-            return BlogPostsController.fill_information(BlogPost[url])
+            return BlogPostsController.fill_information(BlogPost[url], False)
         except core.ObjectNotFound:
             raise NotFound
 

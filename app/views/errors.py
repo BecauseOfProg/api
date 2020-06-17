@@ -1,4 +1,5 @@
 from main import app
+from core.exceptions import PaginationError
 
 
 @app.errorhandler(400)
@@ -44,6 +45,15 @@ def method_not_allowed(_):
         'message': 'Method not allowed'
     }
     return response, 405, {'Content-Type': 'application/json'}
+
+
+@app.errorhandler(PaginationError)
+def pagination_error(_):
+    response = {
+        'code': 0,
+        'message': 'Invalid page number. Required type : integer greater than 0'
+    }
+    return response, 400, {'Content-Type': 'application/json'}
 
 
 @app.errorhandler(500)

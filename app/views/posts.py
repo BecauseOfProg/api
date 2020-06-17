@@ -5,15 +5,19 @@ from app.controllers.users import UsersController
 from app.middlewares.body import CheckBody
 from app.middlewares.permissions import CheckPermissions
 from core import responses
+from core.utils.pagination import paginate
 from core.exceptions import DataError
 from main import app
 
 
 @app.route('/v1/posts', methods=['GET'])
 def get_all_posts():
+    posts = PostsController.fetch_all()
+    posts, pages = paginate(request, posts)
     response = {
         'code': 1,
-        'data': PostsController.get_all()
+        'pages': pages,
+        'data': PostsController.multi_fill_information(posts)
     }
     return responses.response(response)
 

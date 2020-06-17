@@ -5,25 +5,14 @@ from app.controllers.users import UsersController
 from app.middlewares.body import CheckBody
 from app.middlewares.permissions import CheckPermissions
 from core import responses
+from core.utils.pagination import paginate
 from core.exceptions import DataError
 from main import app
 
 
 @app.route('/v1/blog-posts', methods=['GET'])
 def get_all_blog_posts():
-    try:
-        page = request.args.get('page', '1')
-        page = int(page)
-    except ValueError:
-        return responses.response(
-            {
-                'code': 0,
-                'message': 'Invalid page number. Required type : integer'
-            },
-            400
-        )
-
-    posts = BlogPostsController.get_all()
+    posts = BlogPostsController.fetch_all()
 
     category = request.args.get('category', None)
     if category is not None:
@@ -33,8 +22,8 @@ def get_all_blog_posts():
     if type is not None:
         posts = BlogPostsController.filter_by_type(posts, type)
 
-    (posts, pages) = BlogPostsController.paginate(posts, page)
-    posts = BlogPostsController.multi_fill_information(posts, True)
+    posts, pages = paginate(request, posts)
+    posts = BlogPostsController.multi_fill_information(posts)
 
     response = {
         'code': 1,
