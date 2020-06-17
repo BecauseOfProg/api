@@ -6,7 +6,6 @@ from app.middlewares.body import CheckBody
 from app.middlewares.auth import CheckAuth
 from app.middlewares.permissions import CheckPermissions
 from core import responses
-from core.exceptions import DataError
 from main import app
 
 
@@ -56,14 +55,11 @@ def create_user():
             'min_length': 8
         }
     }
-    try:
-        data = CheckBody.call(request, required_data=required_data, optional_data={})
-        UsersController.create_one(email=data['email'],
-                                   username=data['username'],
-                                   password=data['password'])
-        return responses.response({'code': 1}, 201)
-    except DataError:
-        return responses.data_error(required_data)
+    data = CheckBody.call(request, required_data=required_data)
+    UsersController.create_one(email=data['email'],
+                               username=data['username'],
+                               password=data['password'])
+    return responses.response({'code': 1}, 201)
 
 
 @app.route('/v1/users/<string:username>', methods=['PATCH'])
@@ -90,7 +86,7 @@ def update_profile(username):
             'type': 'list<dict>'
         }
     }
-    data = CheckBody.call(request, required_data={}, optional_data=optional_data)
+    data = CheckBody.call(request, optional_data=optional_data)
     CheckAuth(request)
     token = request.headers.get('Authorization')
     if UsersController.get_one_by_token(token)['username'] != username:
@@ -132,10 +128,7 @@ def update_permissions(username):
             'type': 'list'
         }
     }
-    try:
-        CheckPermissions(request, permissions=['USER_WRITE'])
-        request_data = request.json
-        UsersController.update_permissions(username, request_data['permissions'])
-        return responses.no_content()
-    except DataError:
-        return responses.data_error(required_data)
+    CheckPermissions(request, permissions=['USER_WRITE'])
+    request_data = request.json
+    UsersController.update_permissions(username, request_data['permissions'])
+    return responses.no_content()

@@ -6,7 +6,6 @@ from app.middlewares.body import CheckBody
 from app.middlewares.permissions import CheckPermissions
 from core import responses
 from core.utils.pagination import paginate
-from core.exceptions import DataError
 from main import app
 
 
@@ -65,19 +64,16 @@ def create_post():
             'type': 'string'
         }
     }
-    try:
-        data = CheckBody.call(request, required_data=required_data, optional_data={})
-        CheckPermissions(request, permissions=['POST_WRITE'])
-        author = UsersController.get_one_by_token(request.headers.get('Authorization'))
-        PostsController.create_one(title=data['title'],
-                                   url=data['url'],
-                                   category=data['category'],
-                                   content=data['content'],
-                                   author_username=author['username'],
-                                   banner=data['banner'])
-        return responses.response({'code': 1}, 201)
-    except DataError:
-        return responses.data_error(required_data)
+    data = CheckBody.call(request, required_data=required_data)
+    CheckPermissions(request, permissions=['POST_WRITE'])
+    author = UsersController.get_one_by_token(request.headers.get('Authorization'))
+    PostsController.create_one(title=data['title'],
+                               url=data['url'],
+                               category=data['category'],
+                               content=data['content'],
+                               author_username=author['username'],
+                               banner=data['banner'])
+    return responses.response({'code': 1}, 201)
 
 
 @app.route('/v1/posts/<string:url>', methods=['PATCH'])
@@ -101,7 +97,7 @@ def edit_post(url):
         }
     }
     PostsController.get_one(url)
-    data = CheckBody.call(request, required_data={}, optional_data=optional_data)
+    data = CheckBody.call(request, optional_data=optional_data)
     CheckPermissions(request, permissions=['POST_WRITE'])
     PostsController.update_one(url=url,
                                params=data['optional'],

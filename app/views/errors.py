@@ -1,5 +1,6 @@
 from main import app
-from core.exceptions import PaginationError
+from core import responses
+from core.exceptions import *
 
 
 @app.errorhandler(400)
@@ -8,7 +9,7 @@ def client_error(_):
         'code': 0,
         'message': 'Bad request'
     }
-    return response, 400, {'Content-Type': 'application/json'}
+    return responses.response(response, 400)
 
 
 @app.errorhandler(401)
@@ -17,7 +18,7 @@ def unauthorized(_):
         'code': 0,
         'message': 'Unauthorized'
     }
-    return response, 401, {'Content-Type': 'application/json'}
+    return responses.response(response, 401)
 
 
 @app.errorhandler(403)
@@ -26,7 +27,7 @@ def forbidden(_):
         'code': 0,
         'message': 'Forbidden'
     }
-    return response, 403, {'Content-Type': 'application/json'}
+    return responses.response(response, 403)
 
 
 @app.errorhandler(404)
@@ -35,7 +36,7 @@ def page_not_found(_):
         'code': 0,
         'message': 'Not found'
     }
-    return response, 404, {'Content-Type': 'application/json'}
+    return responses.response(response, 404)
 
 
 @app.errorhandler(405)
@@ -44,7 +45,7 @@ def method_not_allowed(_):
         'code': 0,
         'message': 'Method not allowed'
     }
-    return response, 405, {'Content-Type': 'application/json'}
+    return responses.response(response, 405)
 
 
 @app.errorhandler(PaginationError)
@@ -53,7 +54,38 @@ def pagination_error(_):
         'code': 0,
         'message': 'Invalid page number. Required type : integer greater than 0'
     }
-    return response, 400, {'Content-Type': 'application/json'}
+    return responses.response(response, 400)
+
+
+@app.errorhandler(InvalidCredentials)
+def invalid_credentials(_):
+    response = {
+        'code': 0,
+        'message': 'Invalid email address and/or password'
+    }
+    return responses.response(response, 400)
+
+
+@app.errorhandler(DataError)
+def data_error(error):
+    response = {
+        'code': 0,
+        'message':
+            'Error on the passed data. Try looking at the API documentation for required and optional data : '
+            'https://github.com/BecauseOfProg/api-docs',
+        'required_data': error.required_data,
+        'optional_data': error.optional_data
+    }
+    return responses.response(response, 400)
+
+
+@app.errorhandler(NotUnique)
+def not_unique(_):
+    response = {
+        'code': 0,
+        'message': 'The resource already exists. Try changing the identifier (URL or username)'
+    }
+    return responses.response(response, 400)
 
 
 @app.errorhandler(500)
@@ -62,4 +94,4 @@ def internal_server_error(_):
         'code': 0,
         'message': 'Internal server error'
     }
-    return response, 500, {'Content-Type': 'application/json'}
+    return responses.response(response, 500)

@@ -6,7 +6,6 @@ from app.middlewares.body import CheckBody
 from app.middlewares.permissions import CheckPermissions
 from core import responses
 from core.utils.pagination import paginate
-from core.exceptions import DataError
 from main import app
 
 
@@ -83,17 +82,14 @@ def create_blog_post():
             'default': 'fr'
         }
     }
-    try:
-        data = CheckBody.call(request, required_data=required_data, optional_data=optional_data)
-        CheckPermissions(request, permissions=['BLOG_WRITE'])
-        author = UsersController.get_one_by_token(request.headers.get('Authorization'))
-        data['author_username'] = author['username']
-        BlogPostsController.create_one(params=data,
-                                       optional_data=optional_data
-                                       )
-        return responses.response({'code': 1}, 201)
-    except DataError:
-        return responses.data_error(required_data, optional_data)
+    data = CheckBody.call(request, required_data=required_data, optional_data=optional_data)
+    CheckPermissions(request, permissions=['BLOG_WRITE'])
+    author = UsersController.get_one_by_token(request.headers.get('Authorization'))
+    data['author_username'] = author['username']
+    BlogPostsController.create_one(params=data,
+                                   optional_data=optional_data
+                                   )
+    return responses.response({'code': 1}, 201)
 
 
 @app.route('/v1/blog-posts/<string:url>', methods=['GET'])
@@ -135,16 +131,13 @@ def edit_blog_post(url):
             'min_length': 20
         }
     }
-    try:
-        post = BlogPostsController.get_one(url)
-        data = CheckBody.call(request, required_data={}, optional_data=optional_data)
-        CheckPermissions(request, permissions=['BLOG_WRITE'])
-        BlogPostsController.update_one(url=url,
-                                       params=data['optional'],
-                                       optional_data=optional_data)
-        return responses.no_content()
-    except DataError:
-        return responses.data_error({}, optional_data)
+    post = BlogPostsController.get_one(url)
+    data = CheckBody.call(request, optional_data=optional_data)
+    CheckPermissions(request, permissions=['BLOG_WRITE'])
+    BlogPostsController.update_one(url=url,
+                                   params=data['optional'],
+                                   optional_data=optional_data)
+    return responses.no_content()
 
 
 @app.route('/v1/blog-posts/<string:url>', methods=['DELETE'])
