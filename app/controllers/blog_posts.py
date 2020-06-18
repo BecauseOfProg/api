@@ -1,24 +1,23 @@
 import time
 from pony.orm import *
-from werkzeug.exceptions import NotFound
 from app.controllers.users import UsersController
 from app.models.blog_posts import BlogPost
 
 
 class BlogPostsController:
     @staticmethod
-    def fill_information(post: BlogPost, without_content: bool = True):
-        to_exclude = 'content' if without_content else None
+    def fill_information(post: BlogPost, include_content: bool = False):
+        to_exclude = None if include_content else 'content'
         post = post.to_dict(exclude=to_exclude)
         post['author'] = UsersController.get_one(post['author'])
         return post
 
     @staticmethod
     @db_session
-    def multi_fill_information(posts: [BlogPost], without_content: bool = True):
+    def multi_fill_information(posts: [BlogPost], include_content: bool = False):
         posts = list(posts)
         for post in posts:
-            posts[posts.index(post)] = BlogPostsController.fill_information(post, without_content)
+            posts[posts.index(post)] = BlogPostsController.fill_information(post, include_content)
         return posts
 
     @staticmethod
@@ -40,12 +39,12 @@ class BlogPostsController:
     @db_session
     def get_last():
         posts = BlogPostsController.fetch_all()
-        return BlogPostsController.fill_information(posts.first(), False)
+        return BlogPostsController.fill_information(posts.first(), include_content=True)
 
     @staticmethod
     @db_session
     def get_one(url):
-        return BlogPostsController.fill_information(BlogPost[url], False)
+        return BlogPostsController.fill_information(BlogPost[url], include_content=True)
 
     @staticmethod
     @db_session

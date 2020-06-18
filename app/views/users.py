@@ -11,28 +11,19 @@ from main import app
 
 @app.route('/v1/users', methods=['GET'])
 def get_all_users():
-    CheckPermissions(request, permissions=['USER_WRITE'])
-    return responses.response({
-        'code': 1,
-        'data': UsersController.get_all()
-    })
+    CheckPermissions(request, ['USER_WRITE'])
+    return responses.success(UsersController.get_all())
 
 
 @app.route('/v1/users/<string:username>', methods=['GET'])
 def get_one_user(username):
-    return responses.response({
-        'code': 1,
-        'data': UsersController.get_one(username)
-    })
+    return responses.success(UsersController.get_one(username))
 
 
 @app.route('/v1/users/<string:username>/permissions', methods=['GET'])
 def get_user_permissions(username):
-    CheckPermissions(request, permissions=['USER_WRITE'])
-    return responses.response({
-        'code': 1,
-        'data': UsersController.get_user_permissions(username)
-    })
+    CheckPermissions(request, ['USER_WRITE'])
+    return responses.success(UsersController.get_user_permissions(username))
 
 
 @app.route('/v1/users', methods=['POST'])

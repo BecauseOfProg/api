@@ -19,20 +19,14 @@ def create_session():
         }
     }
     data = CheckBody.call(request, required_data=required_data)
-    user, token = AuthController.create_session(email=data['email'], password=data['password'])
-    return responses.response({
-        'code': 1,
-        'data': {
-            'user': user,
-            'token': token
-        }
+    user, token = AuthController.create_session(data['email'], data['password'])
+    return responses.success({
+        'user': user,
+        'token': token
     })
 
 
 @app.route('/v1/auth/data', methods=['GET'])
 def get_information():
     CheckAuth(request)
-    return responses.response({
-        'code': 1,
-        'data': UsersController.get_one_by_token(request.headers.get('Authorization'))
-    })
+    return responses.success(UsersController.get_one_by_token(request.headers.get('Authorization')))

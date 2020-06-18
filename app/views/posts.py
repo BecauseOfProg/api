@@ -13,27 +13,17 @@ from main import app
 def get_all_posts():
     posts = PostsController.fetch_all()
     posts, pages = paginate(request, posts)
-    return responses.response({
-        'code': 1,
-        'pages': pages,
-        'data': PostsController.multi_fill_information(posts)
-    })
+    return responses.success(PostsController.multi_fill_information(posts), pages=pages)
 
 
 @app.route('/v1/posts/last', methods=['GET'])
 def get_last_post():
-    return responses.response({
-        'code': 1,
-        'data': PostsController.get_last()
-    })
+    return responses.success(PostsController.get_last())
 
 
 @app.route('/v1/posts/<string:url>', methods=['GET'])
 def get_one_post(url):
-    return responses.response({
-        'code': 1,
-        'data': PostsController.get_one(url)
-    })
+    return responses.success(PostsController.get_one(url))
 
 
 @app.route('/v1/posts', methods=['POST'])

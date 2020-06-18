@@ -10,14 +10,13 @@ from core.utils.passwords import ArgonHasher
 
 class UsersController:
     @staticmethod
-    def fill_information(user: User, additional_fields=None):
-        if additional_fields is None:
-            additional_fields = []
-
+    def fill_information(user: User, include_permissions: bool = False):
         fields = ['username', 'displayname', 'timestamp', 'picture', 'description', 'biography', 'location', 'socials',
-                  'is_email_public'] + additional_fields
+                  'is_email_public']
         if user.is_email_public:
             fields.append('email')
+        if include_permissions:
+            fields.append('permissions')
         return user.to_dict(only=fields)
 
     @staticmethod
@@ -42,7 +41,7 @@ class UsersController:
         if user is None:
             raise NotFound
         UsersController.check_active(user)
-        return UsersController.fill_information(user, additional_fields=['permissions'])
+        return UsersController.fill_information(user, include_permissions=True)
 
     @staticmethod
     @db_session

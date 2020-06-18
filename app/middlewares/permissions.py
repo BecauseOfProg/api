@@ -10,7 +10,5 @@ class CheckPermissions:
         CheckAuth(request)
         user = UsersController.get_one_by_token(request.headers.get('Authorization'))
         for permission in permissions:
-            if permission in user['permissions']:
-                pass
-            else:
+            if permission not in user['permissions']:
                 raise Forbidden

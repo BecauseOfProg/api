@@ -1,8 +1,5 @@
 import time
-
 from pony.orm import *
-from werkzeug.exceptions import NotFound
-
 from app.controllers.users import UsersController
 from app.models.posts import Post
 
@@ -10,18 +7,18 @@ from app.models.posts import Post
 class PostsController:
     @staticmethod
     @db_session
-    def fill_information(post: Post, without_content: bool = True):
-        to_exclude = 'content' if without_content else None
+    def fill_information(post: Post, include_content: bool = False):
+        to_exclude = None if include_content else 'content'
         post = post.to_dict(exclude=to_exclude)
         post['author'] = UsersController.get_one(post['author'])
         return post
 
     @staticmethod
     @db_session
-    def multi_fill_information(posts: [Post], without_content: bool = True):
+    def multi_fill_information(posts: [Post], include_content: bool = False):
         posts = list(posts)
         for post in posts:
-            posts[posts.index(post)] = PostsController.fill_information(post, without_content)
+            posts[posts.index(post)] = PostsController.fill_information(post, include_content)
         return posts
 
     @staticmethod
@@ -33,12 +30,12 @@ class PostsController:
     @db_session
     def get_last():
         posts = PostsController.fetch_all()
-        return PostsController.fill_information(posts.first(), False)
+        return PostsController.fill_information(posts.first(), True)
 
     @staticmethod
     @db_session
     def get_one(url):
-        return PostsController.fill_information(Post[url], False)
+        return PostsController.fill_information(Post[url], True)
 
     @staticmethod
     @db_session
