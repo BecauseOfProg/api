@@ -1,5 +1,5 @@
 def response(data: dict, code: int):
-    return data, code, {'Content-Type': 'application/json'}
+    return data, code
 
 
 def success(data: dict, additional=None, pages: int = 0, code: int = 200):
