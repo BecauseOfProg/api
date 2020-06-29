@@ -35,11 +35,6 @@ def get_last_blog_post():
 @app.route('/v1/blog-posts', methods=['POST'])
 def create_blog_post():
     required_data = {
-        'url': {
-            'type': 'string',
-            'min_length': 5,
-            'max_length': 64
-        },
         'title': {
             'type': 'string',
             'min_length': 5,

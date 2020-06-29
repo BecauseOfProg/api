@@ -1,5 +1,6 @@
 import time
 from pony.orm import *
+from core.utils.ids import generate_url
 from app.controllers.users import UsersController
 from app.models.posts import Post
 
@@ -39,15 +40,15 @@ class PostsController:
 
     @staticmethod
     @db_session
-    def create_one(title, url, category, content, banner, author_username):
+    def create_one(params):
         timestamp = int(time.time())
-        post = Post(title=title,
-                    url=url,
-                    content=content,
-                    category=category,
-                    banner=banner,
+        post = Post(title=params['title'],
+                    url=generate_url(params['title']),
+                    content=params['content'],
+                    category=params['category'],
+                    banner=params['banner'],
                     timestamp=timestamp,
-                    author=author_username)
+                    author=params['author_username'])
         commit()
         return True
 

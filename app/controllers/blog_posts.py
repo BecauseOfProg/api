@@ -1,5 +1,6 @@
 import time
 from pony.orm import *
+from core.utils.ids import generate_url
 from app.controllers.users import UsersController
 from app.models.blog_posts import BlogPost
 
@@ -52,7 +53,7 @@ class BlogPostsController:
         timestamp = int(time.time())
 
         # Required fields
-        post = BlogPost(url=params['url'],
+        post = BlogPost(url=generate_url(params['title']),
                         title=params['title'],
                         timestamp=timestamp,
                         author=params['author_username'],

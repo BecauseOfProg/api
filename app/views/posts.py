@@ -34,11 +34,6 @@ def create_post():
             'min_length': 5,
             'max_length': 64
         },
-        'url': {
-            'type': 'string',
-            'min_length': 5,
-            'max_length': 64
-        },
         'category': {
             'type': 'string',
             'max_length': 20
@@ -54,12 +49,8 @@ def create_post():
     data = CheckBody.call(request, required_data=required_data)
     CheckPermissions(request, permissions=['POST_WRITE'])
     author = UsersController.get_one_by_token(request.headers.get('Authorization'))
-    PostsController.create_one(title=data['title'],
-                               url=data['url'],
-                               category=data['category'],
-                               content=data['content'],
-                               author_username=author['username'],
-                               banner=data['banner'])
+    data['author_username'] = author['username']
+    PostsController.create_one(data)
     return responses.created()
 
 

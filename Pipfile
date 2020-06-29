@@ -10,6 +10,7 @@ pony = "==0.7.6"
 flup = "==1.0.3"
 flask = "==1.1.2"
 flask-cors = "*"
+python-urlify = {editable = true,git = "git://github.com/dreikanter/python-urlify"}
 
 [dev-packages]
 
