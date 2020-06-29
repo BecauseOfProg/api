@@ -26,6 +26,7 @@ def get_user_permissions(username):
     return responses.success(UsersController.get_user_permissions(username))
 
 
+"""
 @app.route('/v1/users', methods=['POST'])
 def create_user():
     required_data = {
@@ -48,6 +49,7 @@ def create_user():
                                username=data['username'],
                                password=data['password'])
     return responses.created()
+"""
 
 
 @app.route('/v1/users/<string:username>', methods=['PATCH'])
