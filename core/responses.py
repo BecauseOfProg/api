@@ -28,8 +28,8 @@ def fail(message: str, additional=None, code: int = 400):
 
 
 def created():
-    return success({}, 201)
+    return success({}, code=201)
 
 
 def no_content():
-    return success({}, 204)
+    return success({}, code=204)
