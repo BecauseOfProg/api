@@ -4,18 +4,15 @@ from .config import Config
 
 
 class ApiDatabase:
-
     @staticmethod
     def create():
         config = Config()
-        db = config.get('db', 'db')
-        host = config.get('db', 'host')
-        username = config.get('db', 'username')
-        password = config.get('db', 'password')
         database = Database()
-        database.bind(provider='mysql',
-                           host=host,
-                           user=username,
-                           passwd=password,
-                           db=db)
+        database.bind(
+            provider='mysql',
+            host=config.get('db', 'host'),
+            user=config.get('db', 'username'),
+            passwd=config.get('db', 'password'),
+            db=config.get('db', 'db')
+        )
         return database

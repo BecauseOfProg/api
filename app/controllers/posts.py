@@ -1,75 +1,68 @@
 import time
-
 from pony.orm import *
-from werkzeug.exceptions import NotFound
-from core.exceptions import DataError
-
+from core.utils.ids import generate_url
 from app.controllers.users import UsersController
 from app.models.posts import Post
-from core.utils import ids
 
 
 class PostsController:
     @staticmethod
-    def fill_informations(post: Post, additional_fields: list = []):
-        fields = ['title', 'url', 'category', 'author', 'timestamp', 'banner'] + additional_fields
-        post = post.to_dict(only=fields)
+    @db_session
+    def fill_information(post: Post, include_content: bool = False):
+        to_exclude = None if include_content else 'content'
+        post = post.to_dict(exclude=to_exclude)
         post['author'] = UsersController.get_one(post['author'])
         return post
 
     @staticmethod
     @db_session
-    def get_all():
-        posts = list(Post.select().order_by(desc(Post.timestamp)))
+    def multi_fill_information(posts: [Post], include_content: bool = False):
+        posts = list(posts)
         for post in posts:
-            posts[posts.index(post)] = PostsController.fill_informations(post)
+            posts[posts.index(post)] = PostsController.fill_information(post, include_content)
         return posts
 
     @staticmethod
     @db_session
+    def fetch_all():
+        return Post.select().sort_by(desc(Post.timestamp))
+
+    @staticmethod
+    @db_session
     def get_last():
-        posts = list(Post.select().order_by(desc(Post.timestamp)))
-        return PostsController.fill_informations(posts[0])
+        posts = PostsController.fetch_all()
+        return PostsController.fill_information(posts.first(), True)
 
     @staticmethod
     @db_session
     def get_one(url):
-        try:
-            return PostsController.fill_informations(Post[url], ['content'])
-        except core.ObjectNotFound:
-            raise NotFound
+        return PostsController.fill_information(Post[url], True)
 
     @staticmethod
     @db_session
-    def create_one(title, url, category, content, banner, author_username):
+    def create_one(params):
         timestamp = int(time.time())
-        post = Post(title=title,
-                    url=url,
-                    content=content,
-                    category=category,
-                    banner=banner,
+        post = Post(title=params['title'],
+                    url=generate_url(params['title']),
+                    content=params['content'],
+                    category=params['category'],
+                    banner=params['banner'],
                     timestamp=timestamp,
-                    author=author_username)
+                    author=params['author_username'])
         commit()
         return True
 
     @staticmethod
     @db_session
     def update_one(url, params, optional_data):
-        try:
-            post = Post[url]
-            for field in optional_data:
-                if field in params:
-                    setattr(post, field, params[field])
-            commit()
-        except core.ObjectNotFound:
-            raise NotFound
+        post = Post[url]
+        for field in optional_data:
+            if field in params:
+                setattr(post, field, params[field])
+        commit()
 
     @staticmethod
     @db_session
     def delete_one(url):
-        try:
-            Post[url].delete()
-            return True
-        except core.ObjectNotFound:
-            raise NotFound
+        Post[url].delete()
+        return True

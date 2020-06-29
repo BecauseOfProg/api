@@ -1,43 +1,51 @@
 import time
-
 from pony.orm import *
-from werkzeug.exceptions import NotFound
+from core.utils.ids import generate_url
 from app.controllers.users import UsersController
 from app.models.blog_posts import BlogPost
 
 
 class BlogPostsController:
     @staticmethod
-    def fill_informations(post: BlogPost, without_content: bool = False):
-        if without_content:
-            to_exclude = 'content'
-        else:
-            to_exclude = None
-        p = post.to_dict(exclude=to_exclude)
-        p['author'] = UsersController.get_one(p['author'])
-        return p
+    def fill_information(post: BlogPost, include_content: bool = False):
+        to_exclude = None if include_content else 'content'
+        post = post.to_dict(exclude=to_exclude)
+        post['author'] = UsersController.get_one(post['author'])
+        return post
 
     @staticmethod
     @db_session
-    def get_all():
-        posts = list(BlogPost.select().order_by(desc(BlogPost.timestamp)))
+    def multi_fill_information(posts: [BlogPost], include_content: bool = False):
+        posts = list(posts)
         for post in posts:
-            posts[posts.index(post)] = BlogPostsController.fill_informations(post, True)
+            posts[posts.index(post)] = BlogPostsController.fill_information(post, include_content)
         return posts
 
     @staticmethod
     @db_session
+    def fetch_all():
+        return BlogPost.select().sort_by(desc(BlogPost.timestamp))
+
+    @staticmethod
+    @db_session
+    def filter_by_category(posts, category):
+        return posts.where(category=category)
+
+    @staticmethod
+    @db_session
+    def filter_by_type(posts, type):
+        return posts.where(type=type)
+
+    @staticmethod
+    @db_session
     def get_last():
-        posts = list(BlogPost.select().order_by(desc(BlogPost.timestamp)))
-        return BlogPostsController.fill_informations(posts[0])
+        posts = BlogPostsController.fetch_all()
+        return BlogPostsController.fill_information(posts.first(), include_content=True)
 
     @staticmethod
     @db_session
     def get_one(url):
-        try:
-            return BlogPostsController.fill_informations(BlogPost[url])
-        except core.ObjectNotFound:
-            raise NotFound
+        return BlogPostsController.fill_information(BlogPost[url], include_content=True)
 
     @staticmethod
     @db_session
@@ -45,7 +53,7 @@ class BlogPostsController:
         timestamp = int(time.time())
 
         # Required fields
-        post = BlogPost(url=params['url'],
+        post = BlogPost(url=generate_url(params['title']),
                         title=params['title'],
                         timestamp=timestamp,
                         author=params['author_username'],
@@ -65,20 +73,14 @@ class BlogPostsController:
     @staticmethod
     @db_session
     def update_one(url, params, optional_data):
-        try:
-            post = BlogPost[url]
-            for field in optional_data:
-                if field in params:
-                    setattr(post, field, params[field])
-            commit()
-        except core.ObjectNotFound:
-            raise NotFound
+        post = BlogPost[url]
+        for field in optional_data:
+            if field in params:
+                setattr(post, field, params[field])
+        commit()
 
     @staticmethod
     @db_session
     def delete_one(url):
-        try:
-            BlogPost[url].delete()
-            return True
-        except core.ObjectNotFound:
-            raise NotFound
+        BlogPost[url].delete()
+        return True

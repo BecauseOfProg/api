@@ -1,32 +1,35 @@
-import json
+def response(data: dict, code: int):
+    return data, code
 
 
-def response(data, code = 200):
-    return json.dumps(data), code, {'Content-Type': 'application/json'}
+def success(data: dict, additional=None, pages: int = 0, code: int = 200):
+    if additional is None:
+        additional = {}
+
+    returning = {
+        'code': 1,
+        'data': data,
+        **additional
+    }
+    if pages != 0:
+        returning['pages'] = pages
+
+    return response(returning, code)
+
+
+def fail(message: str, additional=None, code: int = 400):
+    if additional is None:
+        additional = {}
+    return response({
+        'code': 0,
+        'message': message,
+        **additional
+    }, code)
+
+
+def created():
+    return success({}, code=201)
 
 
 def no_content():
-    return response('', 204)
-
-
-def invalid_username_or_password():
-    return json.dumps({
-        'code': 0,
-        'message': 'Invalid email address and/or password'
-    }), 400, {'Content-Type': 'application/json'}
-
-
-def data_error(required_data, optional_data = {}):
-    return json.dumps({
-        'code': 0,
-        'message': 'Data error',
-        'required_data': required_data,
-        'optional_data': optional_data
-    }), 400, {'Content-Type': 'application/json'}
-
-
-def not_unique():
-    return json.dumps({
-        'code': 0,
-        'message': 'Already exists'
-    }), 400, {'Content-Type': 'application/json'}
+    return success({}, code=204)
