@@ -36,6 +36,11 @@ def get_last_blog_post():
     return responses.success(BlogPostsController.get_last())
 
 
+@app.route('/v1/blog-posts/random', methods=['GET'])
+def get_random_blog_post():
+    return responses.success(BlogPostsController.get_random())
+
+
 @app.route('/v1/blog-posts', methods=['POST'])
 def create_blog_post():
     required_data = {

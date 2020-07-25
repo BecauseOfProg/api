@@ -53,6 +53,12 @@ class BlogPostsController:
 
     @staticmethod
     @db_session
+    def get_random():
+        post = BlogPost.select().random(1)[0]
+        return BlogPostsController.fill_information(post, include_content=True)
+
+    @staticmethod
+    @db_session
     def get_one(url):
         return BlogPostsController.fill_information(BlogPost[url], include_content=True)
 
