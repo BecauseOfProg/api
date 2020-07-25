@@ -1,4 +1,5 @@
 import time
+import json
 from pony.orm import *
 from core.utils.ids import generate_url
 from app.controllers.users import UsersController
@@ -35,6 +36,14 @@ class BlogPostsController:
     @db_session
     def filter_by_type(posts, type):
         return posts.where(type=type)
+
+    @staticmethod
+    @db_session
+    def filter_by_search(posts, search):
+        query = search.lower()
+        return posts.filter(
+            lambda post: query in post.title.lower() or query in post.description.lower()
+        )
 
     @staticmethod
     @db_session

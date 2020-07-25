@@ -21,6 +21,10 @@ def get_all_blog_posts():
     if type is not None:
         posts = BlogPostsController.filter_by_type(posts, type)
 
+    search = request.args.get('search', None)
+    if search is not None:
+        posts = BlogPostsController.filter_by_search(posts, search)
+
     posts, pages = paginate(request, posts)
     posts = BlogPostsController.multi_fill_information(posts)
 
