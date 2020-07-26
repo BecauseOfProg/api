@@ -11,7 +11,7 @@ from main import app
 
 @app.route('/v1/users', methods=['GET'])
 def get_all_users():
-    CheckPermissions(request, ['USER_WRITE'])
+    CheckPermissions.call(request, ['USER_WRITE'])
     return responses.success(UsersController.get_all())
 
 
@@ -22,7 +22,7 @@ def get_one_user(username):
 
 @app.route('/v1/users/<string:username>/permissions', methods=['GET'])
 def get_user_permissions(username):
-    CheckPermissions(request, ['USER_WRITE'])
+    CheckPermissions.call(request, ['USER_WRITE'])
     return responses.success(UsersController.get_user_permissions(username))
 
 
@@ -77,7 +77,7 @@ def update_profile(username):
         }
     }
     data = CheckBody.call(request, optional_data=optional_data)
-    CheckAuth(request)
+    CheckAuth.call(request)
     token = request.headers.get('Authorization')
     if UsersController.get_one_by_token(token)['username'] != username:
         raise NotFound
@@ -118,7 +118,7 @@ def update_permissions(username):
             'type': 'list'
         }
     }
-    CheckPermissions(request, permissions=['USER_WRITE'])
+    CheckPermissions.call(request, permissions=['USER_WRITE'])
     request_data = request.json
     UsersController.update_permissions(username, request_data['permissions'])
     return responses.no_content()

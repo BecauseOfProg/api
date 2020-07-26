@@ -21,6 +21,10 @@ def get_all_blog_posts():
     if type is not None:
         posts = BlogPostsController.filter_by_type(posts, type)
 
+    search = request.args.get('search', None)
+    if search is not None:
+        posts = BlogPostsController.filter_by_search(posts, search)
+
     posts, pages = paginate(request, posts)
     posts = BlogPostsController.multi_fill_information(posts)
 
@@ -30,6 +34,11 @@ def get_all_blog_posts():
 @app.route('/v1/blog-posts/last', methods=['GET'])
 def get_last_blog_post():
     return responses.success(BlogPostsController.get_last())
+
+
+@app.route('/v1/blog-posts/random', methods=['GET'])
+def get_random_blog_post():
+    return responses.success(BlogPostsController.get_random())
 
 
 @app.route('/v1/blog-posts', methods=['POST'])
@@ -69,7 +78,7 @@ def create_blog_post():
         }
     }
     data = CheckBody.call(request, required_data=required_data, optional_data=optional_data)
-    CheckPermissions(request, permissions=['BLOG_WRITE'])
+    CheckPermissions.call(request, permissions=['BLOG_WRITE'])
     author = UsersController.get_one_by_token(request.headers.get('Authorization'))
     data['author_username'] = author['username']
     BlogPostsController.create_one(params=data,
@@ -115,7 +124,7 @@ def edit_blog_post(url):
     }
     post = BlogPostsController.get_one(url)
     data = CheckBody.call(request, optional_data=optional_data)
-    CheckPermissions(request, permissions=['BLOG_WRITE'])
+    CheckPermissions.call(request, permissions=['BLOG_WRITE'])
     BlogPostsController.update_one(url=url,
                                    params=data['optional'],
                                    optional_data=optional_data)
@@ -125,6 +134,6 @@ def edit_blog_post(url):
 @app.route('/v1/blog-posts/<string:url>', methods=['DELETE'])
 def delete_blog_post(url):
     post = BlogPostsController.get_one(url)
-    CheckPermissions(request, permissions=['BLOG_WRITE'])
+    CheckPermissions.call(request, permissions=['BLOG_WRITE'])
     BlogPostsController.delete_one(url)
     return responses.no_content()

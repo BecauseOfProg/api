@@ -28,5 +28,5 @@ def create_session():
 
 @app.route('/v1/auth/data', methods=['GET'])
 def get_information():
-    CheckAuth(request)
+    CheckAuth.call(request)
     return responses.success(UsersController.get_one_by_token(request.headers.get('Authorization')))
