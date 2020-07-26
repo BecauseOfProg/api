@@ -4,7 +4,8 @@ from app.controllers.users import UsersController
 
 
 class CheckAuth:
-    def __init__(self, request):
+    @staticmethod
+    def call(request):
         try:
             token = request.headers.get('Authorization')
             if token is None:
