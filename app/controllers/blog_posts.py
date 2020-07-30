@@ -39,6 +39,11 @@ class BlogPostsController:
 
     @staticmethod
     @db_session
+    def filter_by_author(posts, author):
+        return posts.where(author=author)
+
+    @staticmethod
+    @db_session
     def filter_by_search(posts, search):
         query = search.lower()
         return posts.filter(

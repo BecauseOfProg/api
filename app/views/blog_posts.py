@@ -13,6 +13,7 @@ from main import app
 def get_all_blog_posts():
     posts = BlogPostsController.fetch_all()
 
+    # TODO: make the code less repetitive by using a dict or something like that
     category = request.args.get('category', None)
     if category is not None:
         posts = BlogPostsController.filter_by_category(posts, category)
@@ -20,6 +21,10 @@ def get_all_blog_posts():
     type = request.args.get('type', None)
     if type is not None:
         posts = BlogPostsController.filter_by_type(posts, type)
+
+    author = request.args.get('author', None)
+    if author is not None:
+        posts = BlogPostsController.filter_by_author(posts, author)
 
     search = request.args.get('search', None)
     if search is not None:
