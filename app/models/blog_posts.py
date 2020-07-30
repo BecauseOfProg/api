@@ -14,6 +14,5 @@ class BlogPost(db.Entity):
     banner = Required(str)
     content = Required(str)
     locale = Required(str, default='fr')
-    article_language = Required(str, default='md')
 
     _table_ = 'articles'
