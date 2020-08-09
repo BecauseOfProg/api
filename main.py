@@ -6,6 +6,6 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 db = ApiDatabase.create()
 
-from app.views import errors, posts, auth, users, blog_posts
+from app.views import errors, posts, auth, users, blog_posts, comments
 
 db.generate_mapping()
