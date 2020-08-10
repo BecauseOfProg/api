@@ -17,10 +17,11 @@ def get_all_comments():
 
 @app.route('/v1/comments/<string:post>', methods=['GET'])
 def get_comments_by_post(post):
+    BlogPostsController.get_one(post)
     comments = CommentsController.fetch_by_post(post)
     comments, pages = paginate(request, comments)
     return responses.success(
-        CommentsController.multi_fill_information(comments, to_exclude=['ip', 'is_validated']),
+        CommentsController.multi_fill_information(comments, to_exclude=['ip', 'is_validated', 'email']),
         pages=pages
     )
 
@@ -39,7 +40,7 @@ def create_comment(post_url):
             'type': 'string'
         }
     }
-    post = BlogPostsController.get_one(post_url)
+    BlogPostsController.get_one(post_url)
     data = CheckBody.call(request, required_data=required_data)
     data['post'] = post_url
     data['ip'] = request.remote_addr

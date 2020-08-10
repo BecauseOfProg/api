@@ -1,4 +1,5 @@
 import time
+import hashlib
 from pony.orm import *
 
 from app.models.comment import Comment
@@ -7,7 +8,6 @@ from app.models.comment import Comment
 class CommentsController:
     @staticmethod
     def fill_information(comment: Comment, to_exclude=None):
-        print(to_exclude)
         return comment.to_dict(exclude=to_exclude)
 
     @staticmethod
@@ -15,7 +15,6 @@ class CommentsController:
     def multi_fill_information(comments: [Comment], to_exclude=None):
         comments = list(comments)
         for comment in comments:
-            print(comment)
             comments[comments.index(comment)] = CommentsController.fill_information(comment, to_exclude)
         return comments
 
@@ -39,9 +38,12 @@ class CommentsController:
     def create_one(params):
         timestamp = int(time.time())
         slug = f"{params['username']}-{str(timestamp)}"
+        email = params['email'].strip().lower()
+        encoded_email = hashlib.md5(str.encode(email)).hexdigest()
         comment = Comment(slug=slug,
                           username=params['username'],
-                          email=params['email'],
+                          email=email,
+                          encoded_email=encoded_email,
                           ip=params['ip'],
                           post=params['post'],
                           content=params['content'],
@@ -55,6 +57,7 @@ class CommentsController:
         comment = Comment[comment]
         comment.is_validated = True
         commit()
+        return True
 
     @staticmethod
     @db_session

@@ -6,6 +6,7 @@ class Comment(db.Entity):
     slug = PrimaryKey(str)
     username = Required(str, max_len=64)
     email = Required(str)
+    encoded_email = Required(str)
     ip = Required(str)
     post = Required(str)
     content = Required(str)
