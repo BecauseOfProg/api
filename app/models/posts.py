@@ -7,7 +7,7 @@ class Post(db.Entity):
     title = Required(str, max_len=64)
     category = Required(str, max_len=20)
     banner = Optional(str, default='')
-    content = Required(LongStr)
+    content = Required(str)
     author = Required(str)
     timestamp = Required(int, unique=True)
 
