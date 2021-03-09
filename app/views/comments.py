@@ -12,7 +12,11 @@ from main import app
 @app.route('/v1/comments', methods=['GET'])
 def get_all_comments():
     CheckPermissions.call(request, ['USER_WRITE'])
-    return responses.success(CommentsController.get_all())
+
+    comments = CommentsController.fetch_all()
+    comments, pages = paginate(request, comments)
+    comments = CommentsController.multi_fill_information(comments)
+    return responses.success(comments, pages=pages)
 
 
 @app.route('/v1/comments/<string:post>', methods=['GET'])
@@ -31,13 +35,16 @@ def create_comment(post_url):
     required_data = {
         'username': {
             'type': 'string',
+            'min_length': 2,
             'max_length': 64
         },
         'email': {
             'type': 'string'
         },
         'content': {
-            'type': 'string'
+            'type': 'string',
+            'min_length': 5,
+            'max_length': 500
         }
     }
     BlogPostsController.get_one(post_url)

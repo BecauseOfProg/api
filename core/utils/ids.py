@@ -1,6 +1,6 @@
 from random import randint
 from time import time
-from urlify import urlify
+from core.utils.url import urlify
 
 
 def generate_id():
