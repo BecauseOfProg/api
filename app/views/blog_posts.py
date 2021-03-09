@@ -13,22 +13,17 @@ from main import app
 def get_all_blog_posts():
     posts = BlogPostsController.fetch_all()
 
-    # TODO: make the code less repetitive by using a dict or something like that
-    category = request.args.get('category', None)
-    if category is not None:
-        posts = BlogPostsController.filter_by_category(posts, category)
+    options = {
+        'category': BlogPostsController.filter_by_category,
+        'type': BlogPostsController.filter_by_type,
+        'author': BlogPostsController.filter_by_author,
+        'search': BlogPostsController.filter_by_search
+    }
 
-    type = request.args.get('type', None)
-    if type is not None:
-        posts = BlogPostsController.filter_by_type(posts, type)
-
-    author = request.args.get('author', None)
-    if author is not None:
-        posts = BlogPostsController.filter_by_author(posts, author)
-
-    search = request.args.get('search', None)
-    if search is not None:
-        posts = BlogPostsController.filter_by_search(posts, search)
+    for name in options:
+        option = request.args.get(name, None)
+        if option is not None:
+            posts = options[name](posts, option)
 
     posts, pages = paginate(request, posts)
     posts = BlogPostsController.multi_fill_information(posts)
