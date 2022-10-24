@@ -1,0 +1,18 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: caprover/deploy-from-github@main
+      with:
+        server: '${{ secrets.CAPROVER_SERVER }}'
+        app: '${{ secrets.APP_NAME }}'
+        token: '${{ secrets.APP_TOKEN }}'
